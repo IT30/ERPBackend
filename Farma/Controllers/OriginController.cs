@@ -3,6 +3,7 @@ using Farma.DTO;
 using Farma.Entities;
 using Farma.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.Metrics;
 
 namespace Farma.Controllers
 {
@@ -39,6 +40,26 @@ namespace Farma.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
+        }
+
+        [HttpGet("{OriginID}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<OriginDTO> GetOriginByID(Guid OriginID)
+        {
+            try
+            {
+                OriginEntity? origin = originRepository.GetOriginByID(OriginID);
+                if (origin == null)
+                    return NotFound();
+                OriginDTO countryDTO = mapper.Map<OriginDTO>(origin);
+                return Ok(countryDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
         }
     }
 }

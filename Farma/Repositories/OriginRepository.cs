@@ -26,7 +26,7 @@ namespace Farma.Repositories
 
         public OriginEntity? GetOriginByID(Guid OriginID)
         {
-            throw new NotImplementedException();
+            return context.Origin.FirstOrDefault(e => e.IDOrigin == OriginID);
         }
 
         public List<OriginEntity> GetOrigins()

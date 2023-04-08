@@ -8,11 +8,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddMvc();
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -25,8 +23,8 @@ builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
 builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<IOriginRepository, OriginRepository>();
 builder.Services.AddScoped<IProductTypeRepository, ProductTypeRepository>();
-//builder.Services.AddScoped<IAutentifikacijaRepository, AutentifikacijaRepository>();
-//builder.Services.AddScoped<IAutentifikacijaHelper, AutentifikacijaHelper>();
+builder.Services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
+
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<FarmaContext>(options =>

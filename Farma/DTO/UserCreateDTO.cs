@@ -10,9 +10,9 @@ namespace Farma.DTO
         [MaxLength(40, ErrorMessage = "User email must be less than 40 characters.")]
         public string Email { get; set; } = string.Empty!;
 
-        [Required(ErrorMessage = "User must have a password for logging.")]
-        [MaxLength(25, ErrorMessage = "User password must be less than 25 characters.")]
-        public string UserPassword { get; set; } = string.Empty!;
+        [Required(ErrorMessage = "User must have a username.")]
+        [MaxLength(15, ErrorMessage = "Username must be less than 15 characters.")]
+        public string Username { get; set; } = string.Empty!;
 
         [Required(ErrorMessage = "User must have a first name.")]
         [MaxLength(30, ErrorMessage = "User last name must be less than 30 characters.")]

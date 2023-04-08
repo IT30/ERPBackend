@@ -21,12 +21,14 @@ namespace Farma.Repositories
 
         public void DeleteUser(Guid UserID)
         {
-            throw new NotImplementedException();
+            UsersEntity? user = GetUserByID(UserID);
+            if (user != null)
+                context.Remove(user);
         }
 
         public UsersEntity? GetUserByID(Guid UserID)
         {
-            throw new NotImplementedException();
+            return context.Users.FirstOrDefault(e => e.IDUser == UserID);
         }
 
         public List<UsersEntity> GetUsers()
@@ -36,7 +38,7 @@ namespace Farma.Repositories
 
         public bool SaveChanges()
         {
-            throw new NotImplementedException();
+            return context.SaveChanges() > 0;
         }
     }
 }

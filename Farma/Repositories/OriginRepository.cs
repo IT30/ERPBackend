@@ -16,7 +16,10 @@ namespace Farma.Repositories
         }
         public OriginDTO CreateOrigin(OriginCreateDTO originCreateDTO)
         {
-            throw new NotImplementedException();
+            OriginEntity origin = mapper.Map<OriginEntity>(originCreateDTO);
+            origin.IDOrigin = Guid.NewGuid();
+            context.Add(origin);
+            return mapper.Map<OriginDTO>(origin);
         }
 
         public void DeleteOrigin(Guid OriginID)

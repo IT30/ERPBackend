@@ -137,35 +137,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "CreateClass",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n        \"class\": \"B\",\r\n        \"classDescription\": \"ok\"\r\n    }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:5020/api/class",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5020",
-							"path": [
-								"api",
-								"class"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -367,35 +338,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "CreateOrigin",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n        \"originName\": \"Zika\",\r\n        \"originDescription\": \"Ovca\"\r\n    }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:5020/api/origin",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5020",
-							"path": [
-								"api",
-								"origin"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -530,35 +472,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "CreateProductType",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n        \"category\": \"Kobasice\",\r\n        \"categoryDescription\": \"Bruka\"\r\n    }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:5020/api/productType",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5020",
-							"path": [
-								"api",
-								"productType"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -655,96 +568,8 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "CreateUser",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"ProfilePictureURL\":\"\",\r\n    \"Email\":\"lala\",\r\n    \"Username\":\"user\",\r\n    \"FirstName\":\"user\",\r\n    \"LastName\":\"user\",\r\n    \"Adress\":\"user\",\r\n    \"City\":\"user\",\r\n    \"Phone\":\"user\",\r\n    \"PwdHash\":\"users\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:5020/api/users",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5020",
-							"path": [
-								"api",
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateUser",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"IDUser\":\"f9833bc5-b985-4af4-ac8e-5d0baab75b67\",\r\n    \"ProfilePictureURL\":\"\",\r\n    \"Email\":\"lala\",\r\n    \"Username\":\"user\",\r\n    \"FirstName\":\"Zoran\",\r\n    \"LastName\":\"user\",\r\n    \"Adress\":\"user\",\r\n    \"City\":\"user\",\r\n    \"Phone\":\"user\",\r\n    \"UserRole\":\"user\",\r\n    \"PwdHash\":\"users\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:5020/api/users",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5020",
-							"path": [
-								"api",
-								"users"
-							]
-						}
-					},
-					"response": []
 				}
 			]
-		}
-	],
-	"auth": {
-		"type": "bearer",
-		"bearer": [
-			{
-				"key": "token",
-				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImM0NzEwMzBiLTZhZjgtNDk5YS05NzdkLWMwMDZiOWVmY2M5NSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZ2l2ZW5uYW1lIjoiQWNhIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc3VybmFtZSI6IlBlcmljIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZW1haWxAZW1haWwuY29tIiwiZXhwIjoxNjgxMDc3MTk5LCJpc3MiOiJGVE5JVEVSUDIwMjMiLCJhdWQiOiJGVE5JVEVSUDIwMjMifQ.bLzevp7Tq91MAvk7R6U0IBPy8vrAYPazRwTYNhIVdEk",
-				"type": "string"
-			}
-		]
-	},
-	"event": [
-		{
-			"listen": "prerequest",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
-		},
-		{
-			"listen": "test",
-			"script": {
-				"type": "text/javascript",
-				"exec": [
-					""
-				]
-			}
 		}
 	]
 }

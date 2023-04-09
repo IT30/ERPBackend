@@ -11,6 +11,8 @@ namespace Farma.Repositories
 
         UserDTO CreateUser(UserCreateDTO userCreateDTO);
 
+        UserDTO UpdateUser(UserUpdateDTO userUpdateDTO);
+
         void DeleteUser(Guid UserID);
 
         bool SaveChanges();

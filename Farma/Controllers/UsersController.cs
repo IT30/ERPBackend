@@ -5,6 +5,7 @@ using Farma.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Xml.Linq;
 
 namespace Farma.Controllers
 {
@@ -69,6 +70,77 @@ namespace Farma.Controllers
                     return Ok(mapper.Map<UserDTO>(user));
                 }
                 return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        [HttpPost]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<UserCreateDTO> CreateUsers([FromBody] UserCreateDTO userCreateDTO)
+        {
+            try
+            {
+                List<UsersEntity> users = usersRepository.GetUsers();
+                if (users.Find(e => e.Username == userCreateDTO.Username) == null &&
+                    users.Find(e => e.Email == userCreateDTO.Email) == null)
+                {
+                    UserDTO userDTO = usersRepository.CreateUser(userCreateDTO);
+                    usersRepository.SaveChanges();
+
+                    string? location = linkGenerator.GetPathByAction("GetUsers", "Users", new { userID = userDTO.IDUser });
+
+                    if (location != null)
+                        return Created(location, userDTO);
+                    else
+                        return Created(string.Empty, userDTO);
+                }
+                else
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "Username or email already exists.");
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        [HttpPut]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<UserDTO> UpdateUser(UserUpdateDTO usersUpdateDTO)
+        {
+            try
+            {
+                if (usersRepository.GetUserByID(Guid.Parse(usersUpdateDTO.IDUser)) == null)
+                    return NotFound();
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN" ||
+                    HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value == usersUpdateDTO.IDUser)
+                {
+                    List<UsersEntity> users = usersRepository.GetUsers();
+                    UsersEntity? tempUser = users.Find(e => e.IDUser == Guid.Parse(usersUpdateDTO.IDUser));
+                    if (tempUser != null)
+                        users.Remove(tempUser);
+                    if (users.Find(e => e.Username == usersUpdateDTO.Username) == null &&
+                        users.Find(e => e.Email == usersUpdateDTO.Email) == null)
+                    {
+                        UserDTO usersDTO = usersRepository.UpdateUser(usersUpdateDTO);
+                        usersRepository.SaveChanges();
+
+                        return Ok(usersDTO);
+                    }
+                    else
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "Username or email already exists.");
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
+                }
             }
             catch (Exception exception)
             {

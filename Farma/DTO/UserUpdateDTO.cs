@@ -28,7 +28,7 @@ namespace Farma.DTO
 
         [Required(ErrorMessage = "User must have an address.")]
         [MaxLength(50, ErrorMessage = "User address must be less than 50 characters.")]
-        public string Address { get; set; } = string.Empty!;
+        public string Adress { get; set; } = string.Empty!;
 
         [Required(ErrorMessage = "User must be from a place.")]
         [MaxLength(30, ErrorMessage = "User phone number must be less than 30 characters.")]

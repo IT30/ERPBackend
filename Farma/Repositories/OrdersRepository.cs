@@ -16,7 +16,10 @@ namespace Farma.Repositories
         }
         public OrdersDTO CreateOrder(OrdersCreateDTO ordersCreateDTO)
         {
-            throw new NotImplementedException();
+            OrdersEntity orders = mapper.Map<OrdersEntity>(ordersCreateDTO);
+            orders.IDOrder = Guid.NewGuid();
+            context.Add(orders);
+            return mapper.Map<OrdersDTO>(orders);
         }
 
         public void DeleteOrder(Guid OrderID)

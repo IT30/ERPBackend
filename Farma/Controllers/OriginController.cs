@@ -64,6 +64,35 @@ namespace Farma.Controllers
 
         }
 
+        [HttpPost]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<OriginCreateDTO> CreateOrigin([FromBody] OriginCreateDTO originCreateDTO, [FromHeader] string authorization)
+        {
+            try
+            {
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    OriginDTO origin = originRepository.CreateOrigin(originCreateDTO);
+                    originRepository.SaveChanges();
+
+                    string? location = linkGenerator.GetPathByAction("GetOrigin", "Origin", new { OriginID = origin.IDOrigin });
+
+                    if (location != null)
+                        return Created(location, origin);
+                    else
+                        return Created(string.Empty, origin);
+                }
+                else
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "Access forbidden.");
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
         [HttpDelete("{originID}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

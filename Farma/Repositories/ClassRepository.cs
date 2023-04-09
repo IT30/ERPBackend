@@ -16,7 +16,10 @@ namespace Farma.Repositories
         }
         public ClassDTO CreateClass(ClassCreateDTO classCreateDTO)
         {
-            throw new NotImplementedException();
+            ClassEntity classs = mapper.Map<ClassEntity>(classCreateDTO);
+            classs.IDClass = Guid.NewGuid();
+            context.Add(classs);
+            return mapper.Map<ClassDTO>(classs);
         }
 
         public void DeleteClass(Guid ClassID)

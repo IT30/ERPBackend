@@ -24,18 +24,18 @@ namespace Farma.DTO
 
         [Required(ErrorMessage = "User must have an address.")]
         [MaxLength(50, ErrorMessage = "User address must be less than 50 characters.")]
-        public string Address { get; set; } = string.Empty!;
+        public string Adress { get; set; } = string.Empty!;
 
         [Required(ErrorMessage = "User must be from a place.")]
-        [MaxLength(30, ErrorMessage = "User phone number must be less than 30 characters.")]
+        [MaxLength(30, ErrorMessage = "User city must be less than 30 characters.")]
         public string City { get; set; } = string.Empty!;
 
         [Required(ErrorMessage = "User must have a phone number.")]
-        [MaxLength(12, ErrorMessage = "User username must be less than 12 characters.")]
+        [MaxLength(12, ErrorMessage = "User phone number must be less than 12 characters.")]
         public string Phone { get; set; } = string.Empty!;
 
-        [Required(ErrorMessage = "User must have a role.")]
-        [MaxLength(6, ErrorMessage = "User type must be less than 6 characters.")]
-        public string UserRole { get; set; } = string.Empty!;
+        [Required(ErrorMessage = "User must have password.")]
+        [MaxLength(15, ErrorMessage = "User password must be less than 15 characters.")]
+        public string PwdHash { get; set; } = string.Empty!;
     }
 }

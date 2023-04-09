@@ -13,12 +13,16 @@ namespace Farma.Controllers
     public class OrderItemController : ControllerBase
     {
         private readonly IOrderItemRepository orderItemRepository;
+        private readonly IOrdersRepository ordersRepository;
+        private readonly IProductRepository productRepository;
         private readonly LinkGenerator linkGenerator;
         private readonly IMapper mapper;
 
-        public OrderItemController(IOrderItemRepository orderItemRepository, LinkGenerator linkGenerator, IMapper mapper)
+        public OrderItemController(IOrderItemRepository orderItemRepository, IOrdersRepository ordersRepository, IProductRepository productRepository, LinkGenerator linkGenerator, IMapper mapper)
         {
             this.orderItemRepository = orderItemRepository;
+            this.ordersRepository = ordersRepository;
+            this.productRepository = productRepository;
             this.linkGenerator = linkGenerator;
             this.mapper = mapper;
         }
@@ -60,6 +64,39 @@ namespace Farma.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
 
+        }
+
+        [HttpPost]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<OrderItemCreateDTO> CreateOrderItem([FromBody] OrderItemCreateDTO orderItemCreateDTO, [FromHeader] string authorization)
+        {
+            try
+            {
+                Guid IDOrder = orderItemCreateDTO.IDOrder;
+                Guid IDProduct = orderItemCreateDTO.IDProduct;
+                List<OrdersEntity> orders = ordersRepository.GetOrders();
+                List<ProductEntity> products = productRepository.GetProducts();
+                if (/*orders.Find(e => e.IDOrder == IDOrder) == null! && products.Find(e => e.IDProduct == IDProduct) == null!*/true)
+                {
+                    OrderItemDTO orderItem = orderItemRepository.CreateOrderItem(orderItemCreateDTO);
+                    orderItemRepository.SaveChanges();
+
+                    string? location = linkGenerator.GetPathByAction("GetOrderItem", "OrderItem", new { OrderItemID = orderItem.IDOrderItem });
+
+                    if (location != null)
+                        return Created(location, orderItem);
+                    else
+                        return Created(string.Empty, orderItem);
+                }
+                else
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "Access forbidden.");
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
         }
 
         [HttpDelete("{orderItemID}")]

@@ -14,9 +14,12 @@ namespace Farma.Repositories
             this.context = context;
             this.mapper = mapper;
         }
-        public OrderItemDTO CreateOrderItem(OrdersCreateDTO orderItemCreateDTO)
+        public OrderItemDTO CreateOrderItem(OrderItemCreateDTO orderItemCreateDTO)
         {
-            throw new NotImplementedException();
+            OrderItemEntity orderItem = mapper.Map<OrderItemEntity>(orderItemCreateDTO);
+            orderItem.IDOrder = Guid.NewGuid();
+            context.Add(orderItem);
+            return mapper.Map<OrderItemDTO>(orderItem);
         }
 
         public void DeleteOrderItem(Guid OrderItemID)

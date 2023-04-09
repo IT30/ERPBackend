@@ -18,6 +18,7 @@ namespace Farma.Repositories
         {
             OrdersEntity orders = mapper.Map<OrdersEntity>(ordersCreateDTO);
             orders.IDOrder = Guid.NewGuid();
+            orders.TransactionDate = DateTime.Now;
             context.Add(orders);
             return mapper.Map<OrdersDTO>(orders);
         }

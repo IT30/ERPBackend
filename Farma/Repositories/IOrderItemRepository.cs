@@ -9,7 +9,7 @@ namespace Farma.Repositories
 
         OrderItemEntity? GetOrderItemByID(Guid OrderItemID);
 
-        OrderItemDTO CreateOrderItem(OrdersCreateDTO orderItemCreateDTO);
+        OrderItemDTO CreateOrderItem(OrderItemCreateDTO orderItemCreateDTO);
 
         void DeleteOrderItem(Guid OrderItemID);
 

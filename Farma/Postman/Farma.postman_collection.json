@@ -233,6 +233,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "CreateOrderItem",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"idOrder\": \"fa3846a6-4aa1-4ee6-8fd7-bab0e2d0fb73\",\r\n        \"idProduct\": \"9ed97caf-9e11-400e-8007-1c8134760222\",\r\n        \"orderAmount\": 10,\r\n        \"orderPrice\": 500\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/orderItem",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"orderItem"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -296,6 +325,35 @@
 								"api",
 								"orders",
 								"55356a15-181f-4437-883b-9edeb871fb39"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateOrder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"idUser\": \"c471030b-6af8-499a-977d-c006b9efcc95\",\r\n        \"totalOrderPrice\": 5000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"orders"
 							]
 						}
 					},
@@ -722,7 +780,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImM0NzEwMzBiLTZhZjgtNDk5YS05NzdkLWMwMDZiOWVmY2M5NSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZ2l2ZW5uYW1lIjoiQWNhIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc3VybmFtZSI6IlBlcmljIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZW1haWxAZW1haWwuY29tIiwiZXhwIjoxNjgxMDc3MTk5LCJpc3MiOiJGVE5JVEVSUDIwMjMiLCJhdWQiOiJGVE5JVEVSUDIwMjMifQ.bLzevp7Tq91MAvk7R6U0IBPy8vrAYPazRwTYNhIVdEk",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImM0NzEwMzBiLTZhZjgtNDk5YS05NzdkLWMwMDZiOWVmY2M5NSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZ2l2ZW5uYW1lIjoiQWNhIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc3VybmFtZSI6IlBlcmljIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZW1haWxAZW1haWwuY29tIiwiZXhwIjoxNjgxMDg1NTQ2LCJpc3MiOiJGVE5JVEVSUDIwMjMiLCJhdWQiOiJGVE5JVEVSUDIwMjMifQ.UGKhor12WBRaVnvV8A4DZttZ7jbWPDAbCVzMJlLp-qQ",
 				"type": "string"
 			}
 		]

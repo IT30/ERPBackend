@@ -13,12 +13,14 @@ namespace Farma.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly IOrdersRepository ordersRepository;
+        private readonly IUsersRepository usersRepository;
         private readonly LinkGenerator linkGenerator;
         private readonly IMapper mapper;
 
-        public OrdersController(IOrdersRepository ordersRepository, LinkGenerator linkGenerator, IMapper mapper)
+        public OrdersController(IOrdersRepository ordersRepository, IUsersRepository usersRepository, LinkGenerator linkGenerator, IMapper mapper)
         {
             this.ordersRepository = ordersRepository;
+            this.usersRepository = usersRepository;
             this.linkGenerator = linkGenerator;
             this.mapper = mapper;
         }
@@ -70,7 +72,8 @@ namespace Farma.Controllers
         {
             try
             {
-                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                Guid IDUser = ordersCreateDTO.IDUser;
+                if (Guid.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) == IDUser)
                 {
                     OrdersDTO orders = ordersRepository.CreateOrder(ordersCreateDTO);
                     ordersRepository.SaveChanges();

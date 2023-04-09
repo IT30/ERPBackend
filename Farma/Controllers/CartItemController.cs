@@ -3,6 +3,7 @@ using Farma.DTO;
 using Farma.Entities;
 using Farma.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Farma.Controllers
 {
@@ -38,6 +39,56 @@ namespace Farma.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("{cartItemID}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<CartItemDTO> GetCartItemByID(Guid cartItemID)
+        {
+            try
+            {
+                CartItemEntity? cartItem = cartItemRepository.GetCartItemByID(cartItemID);
+                if (cartItem == null)
+                    return NotFound();
+                CartItemDTO countryDTO = mapper.Map<CartItemDTO>(cartItem);
+                return Ok(countryDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
+
+        [HttpDelete("{cartItemID}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult DeleteCartItem(string cartItemID)
+        {
+            try
+            {
+                if (!Guid.TryParse(cartItemID, out _))
+                    return BadRequest("The value '" + cartItemID + "' is not valid.");
+
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    CartItemEntity? cartItem = cartItemRepository.GetCartItemByID(Guid.Parse(cartItemID));
+                    if (cartItem == null)
+                        return NotFound("CartItem '" + cartItemID + "' not found.");
+                    cartItemRepository.DeleteCartItem(Guid.Parse(cartItemID));
+                    cartItemRepository.SaveChanges();
+
+                    return NoContent();
+                }
+                return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
     }

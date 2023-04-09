@@ -3,6 +3,7 @@ using Farma.DTO;
 using Farma.Entities;
 using Farma.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Farma.Controllers
 {
@@ -38,6 +39,56 @@ namespace Farma.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("{classID}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<ClassDTO> GetClassByID(Guid classID)
+        {
+            try
+            {
+                ClassEntity? classe = classRepository.GetClassByID(classID);
+                if (classe == null)
+                    return NotFound();
+                ClassDTO countryDTO = mapper.Map<ClassDTO>(classe);
+                return Ok(countryDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
+
+        [HttpDelete("{classID}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult DeleteClass(string classID)
+        {
+            try
+            {
+                if (!Guid.TryParse(classID, out _))
+                    return BadRequest("The value '" + classID + "' is not valid.");
+
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    ClassEntity? classe = classRepository.GetClassByID(Guid.Parse(classID));
+                    if (classe == null)
+                        return NotFound("Class '" + classID + "' not found.");
+                    classRepository.DeleteClass(Guid.Parse(classID));
+                    classRepository.SaveChanges();
+
+                    return NoContent();
+                }
+                return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
     }

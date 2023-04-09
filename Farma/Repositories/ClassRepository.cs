@@ -21,12 +21,14 @@ namespace Farma.Repositories
 
         public void DeleteClass(Guid ClassID)
         {
-            throw new NotImplementedException();
+            ClassEntity? classe = GetClassByID(ClassID);
+            if (classe != null)
+                context.Remove(classe);
         }
 
         public ClassEntity? GetClassByID(Guid ClassID)
         {
-            throw new NotImplementedException();
+            return context.Class.FirstOrDefault(e => e.IDClass == ClassID);
         }
 
         public List<ClassEntity> GetClasses()
@@ -36,7 +38,7 @@ namespace Farma.Repositories
 
         public bool SaveChanges()
         {
-            throw new NotImplementedException();
+            return context.SaveChanges() > 0;
         }
     }
 }

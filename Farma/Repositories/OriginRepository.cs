@@ -21,7 +21,9 @@ namespace Farma.Repositories
 
         public void DeleteOrigin(Guid OriginID)
         {
-            throw new NotImplementedException();
+            OriginEntity? origin = GetOriginByID(OriginID);
+            if (origin != null)
+                context.Remove(origin);
         }
 
         public OriginEntity? GetOriginByID(Guid OriginID)
@@ -36,7 +38,7 @@ namespace Farma.Repositories
 
         public bool SaveChanges()
         {
-            throw new NotImplementedException();
+            return context.SaveChanges() > 0;
         }
     }
 }

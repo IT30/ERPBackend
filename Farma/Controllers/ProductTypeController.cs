@@ -3,6 +3,7 @@ using Farma.DTO;
 using Farma.Entities;
 using Farma.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Farma.Controllers
 {
@@ -38,6 +39,56 @@ namespace Farma.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("{productTypeID}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<ProductTypeDTO> GetProductTypeByID(Guid productTypeID)
+        {
+            try
+            {
+                ProductTypeEntity? productType = productTypeRepository.GetProductTypeByID(productTypeID);
+                if (productType == null)
+                    return NotFound();
+                ProductTypeDTO countryDTO = mapper.Map<ProductTypeDTO>(productType);
+                return Ok(countryDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
+
+        [HttpDelete("{productTypeID}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult DeleteProductType(string productTypeID)
+        {
+            try
+            {
+                if (!Guid.TryParse(productTypeID, out _))
+                    return BadRequest("The value '" + productTypeID + "' is not valid.");
+
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    ProductTypeEntity? productType = productTypeRepository.GetProductTypeByID(Guid.Parse(productTypeID));
+                    if (productType == null)
+                        return NotFound("ProductType '" + productTypeID + "' not found.");
+                    productTypeRepository.DeleteProductType(Guid.Parse(productTypeID));
+                    productTypeRepository.SaveChanges();
+
+                    return NoContent();
+                }
+                return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
     }

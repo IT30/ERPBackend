@@ -2,8 +2,10 @@
 using Farma.DTO;
 using Farma.Entities;
 using Farma.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics.Metrics;
+using System.Security.Claims;
 
 namespace Farma.Controllers
 {
@@ -42,14 +44,14 @@ namespace Farma.Controllers
             }
         }
 
-        [HttpGet("{OriginID}")]
+        [HttpGet("{originID}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public ActionResult<OriginDTO> GetOriginByID(Guid OriginID)
+        public ActionResult<OriginDTO> GetOriginByID(Guid originID)
         {
             try
             {
-                OriginEntity? origin = originRepository.GetOriginByID(OriginID);
+                OriginEntity? origin = originRepository.GetOriginByID(originID);
                 if (origin == null)
                     return NotFound();
                 OriginDTO countryDTO = mapper.Map<OriginDTO>(origin);
@@ -60,6 +62,44 @@ namespace Farma.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
 
+        }
+
+        [HttpDelete("{originID}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult DeleteOrigin(string originID)
+        {
+            try
+            {
+                if (!Guid.TryParse(originID, out _))
+                    return BadRequest("The value '" + originID + "' is not valid.");
+
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    OriginEntity? origin = originRepository.GetOriginByID(Guid.Parse(originID));
+                    if (origin == null)
+                        return NotFound("Origin '" + originID + "' not found.");
+                    originRepository.DeleteOrigin(Guid.Parse(originID));
+                    originRepository.SaveChanges();
+
+                    return NoContent();
+                }
+                return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        [HttpOptions]
+        [AllowAnonymous]
+        public IActionResult GetOriginsOptions()
+        {
+            Response.Headers.Add("Allow", "GET, POST, PUT, DELETE");
+            return Ok();
         }
     }
 }

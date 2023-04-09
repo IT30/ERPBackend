@@ -21,12 +21,14 @@ namespace Farma.Repositories
 
         public void DeleteCartItem(Guid CartItemID)
         {
-            throw new NotImplementedException();
+            CartItemEntity? cartItem = GetCartItemByID(CartItemID);
+            if (cartItem != null)
+                context.Remove(cartItem);
         }
 
         public CartItemEntity? GetCartItemByID(Guid CartItemID)
         {
-            throw new NotImplementedException();
+            return context.CartItem.FirstOrDefault(e => e.IDCartItem == CartItemID);
         }
 
         public List<CartItemEntity> GetCartItems()
@@ -36,7 +38,7 @@ namespace Farma.Repositories
 
         public bool SaveChanges()
         {
-            throw new NotImplementedException();
+            return context.SaveChanges() > 0;
         }
     }
 }

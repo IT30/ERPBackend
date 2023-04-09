@@ -88,15 +88,18 @@ namespace Farma.Controllers
                 if (!Guid.TryParse(userID, out _))
                     return BadRequest("The value '" + userID + "' is not valid.");
 
-                UsersEntity? user = usersRepository.GetUserByID(Guid.Parse(userID));
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN" ||
+                    HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value == userID)
+                {
+                    UsersEntity? user = usersRepository.GetUserByID(Guid.Parse(userID));
+                    if (user == null)
+                        return NotFound("User '" + userID + "' not found.");
+                    usersRepository.DeleteUser(Guid.Parse(userID));
+                    usersRepository.SaveChanges();
 
-                if (user == null)
-                    return NotFound();
-
-                usersRepository.DeleteUser(Guid.Parse(userID));
-                usersRepository.SaveChanges();
-
-                return NoContent();
+                    return NoContent();
+                }
+                return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
             }
             catch (Exception exception)
             {

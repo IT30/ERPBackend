@@ -3,6 +3,7 @@ using Farma.DTO;
 using Farma.Entities;
 using Farma.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Farma.Controllers
 {
@@ -38,6 +39,56 @@ namespace Farma.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("{ordersID}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<OrdersDTO> GetOrdersByID(Guid ordersID)
+        {
+            try
+            {
+                OrdersEntity? orders = ordersRepository.GetOrderByID(ordersID);
+                if (orders == null)
+                    return NotFound();
+                OrdersDTO countryDTO = mapper.Map<OrdersDTO>(orders);
+                return Ok(countryDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
+
+        [HttpDelete("{ordersID}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult DeleteOrders(string ordersID)
+        {
+            try
+            {
+                if (!Guid.TryParse(ordersID, out _))
+                    return BadRequest("The value '" + ordersID + "' is not valid.");
+
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    OrdersEntity? orders = ordersRepository.GetOrderByID(Guid.Parse(ordersID));
+                    if (orders == null)
+                        return NotFound("Orders '" + ordersID + "' not found.");
+                    ordersRepository.DeleteOrder(Guid.Parse(ordersID));
+                    ordersRepository.SaveChanges();
+
+                    return NoContent();
+                }
+                return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
         }
     }

@@ -21,12 +21,14 @@ namespace Farma.Repositories
 
         public void DeleteProductType(Guid ProductTypeID)
         {
-            throw new NotImplementedException();
+            ProductTypeEntity? productType = GetProductTypeByID(ProductTypeID);
+            if (productType != null)
+                context.Remove(productType);
         }
 
         public ProductTypeEntity? GetProductTypeByID(Guid ProductTypeID)
         {
-            throw new NotImplementedException();
+            return context.ProductType.FirstOrDefault(e => e.IDProductType == ProductTypeID);
         }
 
         public List<ProductTypeEntity> GetProductTypes()
@@ -36,7 +38,7 @@ namespace Farma.Repositories
 
         public bool SaveChanges()
         {
-            throw new NotImplementedException();
+            return context.SaveChanges() > 0;
         }
     }
 }

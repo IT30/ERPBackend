@@ -3825,11 +3825,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Files\\Fax\\ERP\\Backend\\Farma\\Farma\\Farma.csproj",
+      "projectUniqueName": "D:\\Files\\Fax\\ERP\\Backend\\Farma\\Farma.csproj",
       "projectName": "Farma",
-      "projectPath": "D:\\Files\\Fax\\ERP\\Backend\\Farma\\Farma\\Farma.csproj",
+      "projectPath": "D:\\Files\\Fax\\ERP\\Backend\\Farma\\Farma.csproj",
       "packagesPath": "C:\\Users\\aleks\\.nuget\\packages\\",
-      "outputPath": "D:\\Files\\Fax\\ERP\\Backend\\Farma\\Farma\\obj\\",
+      "outputPath": "D:\\Files\\Fax\\ERP\\Backend\\Farma\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

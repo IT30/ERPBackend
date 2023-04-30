@@ -91,6 +91,38 @@ namespace Farma.Controllers
             }
         }
 
+        [HttpPut]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<ProductTypeDTO> UpdateProductType(ProductTypeUpdateDTO productTypeUpdateDTO)
+        {
+            try
+            {
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    ProductTypeEntity? oldProductType = productTypeRepository.GetProductTypeByID(productTypeUpdateDTO.IDProductType);
+                    if (oldProductType == null)
+                        return NotFound();
+
+                    ProductTypeEntity kolekcija = mapper.Map<ProductTypeEntity>(productTypeUpdateDTO);
+                    mapper.Map(kolekcija, oldProductType);
+                    productTypeRepository.SaveChanges();
+                    return Ok(mapper.Map<ProductTypeDTO>(kolekcija));
+                }
+                else
+                    return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
+
         [HttpDelete("{productTypeID}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

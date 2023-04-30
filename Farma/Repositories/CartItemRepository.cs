@@ -16,7 +16,10 @@ namespace Farma.Repositories
         }
         public CartItemDTO CreateCartItem(CartItemCreateDTO cartItemCreateDTO)
         {
-            throw new NotImplementedException();
+            CartItemEntity cartItem = mapper.Map<CartItemEntity>(cartItemCreateDTO);
+            cartItem.IDCartItem = Guid.NewGuid();
+            context.Add(cartItem);
+            return mapper.Map<CartItemDTO>(cartItem);
         }
 
         public void DeleteCartItem(Guid CartItemID)

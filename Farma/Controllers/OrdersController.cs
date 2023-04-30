@@ -72,18 +72,24 @@ namespace Farma.Controllers
         {
             try
             {
-                Guid IDUser = ordersCreateDTO.IDUser;
-                if (Guid.Parse(HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value) == IDUser)
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
                 {
-                    OrdersDTO orders = ordersRepository.CreateOrder(ordersCreateDTO);
-                    ordersRepository.SaveChanges();
+                    Guid IDUser = ordersCreateDTO.IDUser;
+                    UsersEntity? usersEntity = usersRepository.GetUserByID(IDUser);
+                    if (usersEntity != null)
+                    {
+                        OrdersDTO orders = ordersRepository.CreateOrder(ordersCreateDTO);
+                        ordersRepository.SaveChanges();
 
-                    string? location = linkGenerator.GetPathByAction("GetOrders", "Orders", new { OrdersID = orders.IDOrder });
+                        string? location = linkGenerator.GetPathByAction("GetOrders", "Orders", new { OrdersID = orders.IDOrder });
 
-                    if (location != null)
-                        return Created(location, orders);
+                        if (location != null)
+                            return Created(location, orders);
+                        else
+                            return Created(string.Empty, orders);
+                    }
                     else
-                        return Created(string.Empty, orders);
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "User do not exist");
                 }
                 else
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "Access forbidden.");
@@ -92,6 +98,46 @@ namespace Farma.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
             }
+        }
+
+        [HttpPut]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<OrdersDTO> UpdateOrders(OrdersUpdateDTO ordersUpdateDTO)
+        {
+            try
+            {
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    Guid IDUser = ordersUpdateDTO.IDUser;
+                    UsersEntity? usersEntity = usersRepository.GetUserByID(IDUser);
+                    if (usersEntity != null )
+                    {
+                        OrdersEntity? oldOrder = ordersRepository.GetOrderByID(ordersUpdateDTO.IDOrder);
+                        if (oldOrder == null)
+                            return NotFound();
+
+                        OrdersEntity kolekcija = mapper.Map<OrdersEntity>(ordersUpdateDTO);
+                        mapper.Map(kolekcija, oldOrder);
+                        ordersRepository.SaveChanges();
+                        return Ok(mapper.Map<OrdersDTO>(kolekcija));
+                    }
+                    else
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "User do not exist");
+
+                }
+                else
+                    return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
         }
 
         [HttpDelete("{ordersID}")]

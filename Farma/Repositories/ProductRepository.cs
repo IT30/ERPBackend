@@ -16,7 +16,10 @@ namespace Farma.Repositories
         }
         public ProductDTO CreateProduct(ProductCreateDTO productCreateDTO)
         {
-            throw new NotImplementedException();
+            ProductEntity product = mapper.Map<ProductEntity>(productCreateDTO);
+            product.IDProduct = Guid.NewGuid();
+            context.Add(product);
+            return mapper.Map<ProductDTO>(product);
         }
 
         public void DeleteProduct(Guid ProductID)

@@ -74,29 +74,76 @@ namespace Farma.Controllers
         {
             try
             {
-                Guid IDOrder = orderItemCreateDTO.IDOrder;
-                Guid IDProduct = orderItemCreateDTO.IDProduct;
-                List<OrdersEntity> orders = ordersRepository.GetOrders();
-                List<ProductEntity> products = productRepository.GetProducts();
-                if (/*orders.Find(e => e.IDOrder == IDOrder) == null! && products.Find(e => e.IDProduct == IDProduct) == null!*/true)
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
                 {
-                    OrderItemDTO orderItem = orderItemRepository.CreateOrderItem(orderItemCreateDTO);
-                    orderItemRepository.SaveChanges();
+                    Guid IDOrder = orderItemCreateDTO.IDOrder;
+                    Guid IDProduct = orderItemCreateDTO.IDProduct;
+                    OrdersEntity? ordersEntity = ordersRepository.GetOrderByID(IDOrder);
+                    ProductEntity? productEntity = productRepository.GetProductByID(IDProduct);
+                    if (ordersEntity != null && productEntity != null)
+                    {
+                        OrderItemDTO orderItem = orderItemRepository.CreateOrderItem(orderItemCreateDTO);
+                        orderItemRepository.SaveChanges();
 
-                    string? location = linkGenerator.GetPathByAction("GetOrderItem", "OrderItem", new { OrderItemID = orderItem.IDOrderItem });
+                        string? location = linkGenerator.GetPathByAction("GetOrderItem", "OrderItem", new { OrderItemID = orderItem.IDOrderItem });
 
-                    if (location != null)
-                        return Created(location, orderItem);
+                        if (location != null)
+                            return Created(location, orderItem);
+                        else
+                            return Created(string.Empty, orderItem);
+                    }
                     else
-                        return Created(string.Empty, orderItem);
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "Order or product do not exist");
                 }
                 else
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, "Access forbidden.");
             }
             catch (Exception exception)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.InnerException);
             }
+        }
+
+        [HttpPut]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<OrderItemDTO> UpdateOrderItem(OrderItemUpdateDTO orderItemUpdateDTO)
+        {
+            try
+            {
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    Guid IDOrder = orderItemUpdateDTO.IDOrder;
+                    Guid IDProduct = orderItemUpdateDTO.IDProduct;
+                    OrdersEntity? ordersEntity = ordersRepository.GetOrderByID(IDOrder);
+                    ProductEntity? productEntity = productRepository.GetProductByID(IDProduct);
+                    if (ordersEntity != null && productEntity != null)
+                    {
+                        OrderItemEntity? oldOrderItem = orderItemRepository.GetOrderItemByID(orderItemUpdateDTO.IDOrderItem);
+                        if (oldOrderItem == null)
+                            return NotFound();
+
+                        OrderItemEntity kolekcija = mapper.Map<OrderItemEntity>(orderItemUpdateDTO);
+                        mapper.Map(kolekcija, oldOrderItem);
+                        orderItemRepository.SaveChanges();
+                        return Ok(mapper.Map<OrderItemDTO>(kolekcija));
+                    }
+                    else
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "Order or product do not exist");
+
+                }
+                else
+                    return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
         }
 
         [HttpDelete("{orderItemID}")]

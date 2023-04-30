@@ -13,12 +13,16 @@ namespace Farma.Controllers
     public class CartItemController : ControllerBase
     {
         private readonly ICartItemRepository cartItemRepository;
+        private readonly IProductRepository productRepository;
+        private readonly IUsersRepository usersRepository;
         private readonly LinkGenerator linkGenerator;
         private readonly IMapper mapper;
 
-        public CartItemController(ICartItemRepository cartItemRepository, LinkGenerator linkGenerator, IMapper mapper)
+        public CartItemController(ICartItemRepository cartItemRepository, IProductRepository productRepository, IUsersRepository usersRepository, LinkGenerator linkGenerator, IMapper mapper)
         {
             this.cartItemRepository = cartItemRepository;
+            this.productRepository = productRepository;
+            this.usersRepository = usersRepository;
             this.linkGenerator = linkGenerator;
             this.mapper = mapper;
         }
@@ -54,6 +58,86 @@ namespace Farma.Controllers
                     return NotFound();
                 CartItemDTO countryDTO = mapper.Map<CartItemDTO>(cartItem);
                 return Ok(countryDTO);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
+
+        [HttpPost]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<CartItemCreateDTO> CreateCartItem([FromBody] CartItemCreateDTO cartItemCreateDTO, [FromHeader] string authorization)
+        {
+            try
+            {
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    Guid IDUser = cartItemCreateDTO.IDUser;
+                    Guid IDProduct = cartItemCreateDTO.IDProduct;
+                    UsersEntity? usersEntity = usersRepository.GetUserByID(IDUser);
+                    ProductEntity? productEntity = productRepository.GetProductByID(IDProduct);
+                    if (usersEntity != null && productEntity != null)
+                    {
+                        CartItemDTO cartItem = cartItemRepository.CreateCartItem(cartItemCreateDTO);
+                        cartItemRepository.SaveChanges();
+
+                        string? location = linkGenerator.GetPathByAction("GetCartItem", "CartItem", new { CartItemID = cartItem.IDCartItem });
+
+                        if (location != null)
+                            return Created(location, cartItem);
+                        else
+                            return Created(string.Empty, cartItem);
+                    }
+                    else
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "User or product do not exist");
+                }
+                else
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, "Access forbidden.");
+            }
+            catch (Exception exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, exception.InnerException);
+            }
+        }
+
+        [HttpPut]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<CartItemDTO> UpdateCartItem(CartItemUpdateDTO cartItemUpdateDTO)
+        {
+            try
+            {
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                {
+                    Guid IDUser = cartItemUpdateDTO.IDUser;
+                    Guid IDProduct = cartItemUpdateDTO.IDProduct;
+                    UsersEntity? usersEntity = usersRepository.GetUserByID(IDUser);
+                    ProductEntity? productEntity = productRepository.GetProductByID(IDProduct);
+                    if (usersEntity != null && productEntity != null)
+                    {
+                        CartItemEntity? oldCartItem = cartItemRepository.GetCartItemByID(cartItemUpdateDTO.IDCartItem);
+                        if (oldCartItem == null)
+                            return NotFound();
+
+                        CartItemEntity kolekcija = mapper.Map<CartItemEntity>(cartItemUpdateDTO);
+                        mapper.Map(kolekcija, oldCartItem);
+                        cartItemRepository.SaveChanges();
+                        return Ok(mapper.Map<CartItemDTO>(kolekcija));
+                    }
+                    else
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, "User or product do not exist");
+
+                }
+                else
+                    return StatusCode(StatusCodes.Status403Forbidden, "Access forbiden");
+
             }
             catch (Exception ex)
             {

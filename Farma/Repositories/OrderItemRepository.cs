@@ -17,7 +17,7 @@ namespace Farma.Repositories
         public OrderItemDTO CreateOrderItem(OrderItemCreateDTO orderItemCreateDTO)
         {
             OrderItemEntity orderItem = mapper.Map<OrderItemEntity>(orderItemCreateDTO);
-            orderItem.IDOrder = Guid.NewGuid();
+            orderItem.IDOrderItem = Guid.NewGuid();
             context.Add(orderItem);
             return mapper.Map<OrderItemDTO>(orderItem);
         }

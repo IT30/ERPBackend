@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "oj2qlULO7kUPTtA/ur/M+kjbc+/dFmHpF+D+zgHyrW4eNuh53m5rrA+dkvbc3mjqXEG/QIGAYIhudVuImvEw1Q==",
+  "dgSpecHash": "Ct6Y9gV1sE4WeVYH56lzYB3sA3iE7RaAhZ8SrurzhY14FkPq2aRpRFtQiVz1tFwXrR6nqzQApz2vICZJP01GOw==",
   "success": true,
-  "projectFilePath": "D:\\Files\\Fax\\ERP\\Backend\\Farma\\Farma\\Farma.csproj",
+  "projectFilePath": "D:\\Files\\Fax\\ERP\\Backend\\Farma\\Farma.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\aleks\\.nuget\\packages\\automapper\\12.0.0\\automapper.12.0.0.nupkg.sha512",
     "C:\\Users\\aleks\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.0\\automapper.extensions.microsoft.dependencyinjection.12.0.0.nupkg.sha512",

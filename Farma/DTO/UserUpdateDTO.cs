@@ -41,5 +41,9 @@ namespace Farma.DTO
         [Required(ErrorMessage = "User must have a role.")]
         [MaxLength(6, ErrorMessage = "User type must be less than 6 characters.")]
         public string UserRole { get; set; } = string.Empty!;
+
+        [Required(ErrorMessage = "User must have password.")]
+        [MaxLength(15, ErrorMessage = "User password must be less than 15 characters.")]
+        public string PwdHash { get; set; } = string.Empty!;
     }
 }

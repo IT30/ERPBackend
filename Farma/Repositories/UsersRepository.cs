@@ -31,10 +31,9 @@ namespace Farma.Repositories
         {
             UsersEntity? oldUser = context.Users.FirstOrDefault(e => e.IDUser == Guid.Parse(userUpdateDTO.IDUser));
             UsersEntity user = mapper.Map<UsersEntity>(userUpdateDTO);
-            Tuple<string, string> hashPassword = HashPassword(user.PwdHash);
+            Tuple<string, string> hashPassword = HashPassword(userUpdateDTO.PwdHash);
             user.PwdHash = hashPassword.Item1;
             user.PwdSalt = hashPassword.Item2;
-            user.UserRole = "USER";
             mapper.Map(user, oldUser);
             return mapper.Map<UserDTO>(user);
         }

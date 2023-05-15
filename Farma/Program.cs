@@ -3,9 +3,11 @@ using Farma.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
+var AllowCors = "_allowCors";
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -44,6 +46,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(AllowCors, builder =>
+    {
+        builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 string? connectionString = builder.Configuration.GetConnectionString("FarmaDB");
@@ -67,7 +79,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var dbContext = services.GetRequiredService<FarmaContext>();
-//    dbContext.Database.EnsureCreated();
+    //    dbContext.Database.EnsureCreated();
 }
 
 // Configure the HTTP request pipeline.
@@ -84,5 +96,14 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors(AllowCors);
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "Photos")),
+    RequestPath = "/Photos"
+});
 
 app.Run();

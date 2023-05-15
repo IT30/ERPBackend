@@ -4,6 +4,9 @@ using Farma.Entities;
 using Farma.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
+using System;
+using System.Net;
 using System.Security.Claims;
 using System.Xml.Linq;
 
@@ -17,12 +20,14 @@ namespace Farma.Controllers
         private readonly IUsersRepository usersRepository;
         private readonly LinkGenerator linkGenerator;
         private readonly IMapper mapper;
+        private readonly IWebHostEnvironment _env;
 
-        public UsersController(IUsersRepository usersRepository, LinkGenerator linkGenerator, IMapper mapper)
+        public UsersController(IUsersRepository usersRepository, LinkGenerator linkGenerator, IMapper mapper, IWebHostEnvironment env)
         {
             this.usersRepository = usersRepository;
             this.linkGenerator = linkGenerator;
             this.mapper = mapper;
+            this._env = env;
         }
 
         [HttpGet]
@@ -176,6 +181,31 @@ namespace Farma.Controllers
             catch (Exception exception)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, exception.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("photo")]
+        public JsonResult SaveFile()
+        {
+            try
+            {
+                var httpRequest = Request.Form;
+                var postedFile = httpRequest.Files[0];
+                string filename = postedFile.FileName;
+                var physicalPath = _env.ContentRootPath + "/Photos/" + filename;
+
+                using (var stream = new FileStream(physicalPath, FileMode.Create))
+                {
+                    postedFile.CopyTo(stream);
+                }
+
+                return new JsonResult(filename);
+            }
+            catch (Exception)
+            {
+
+                return new JsonResult("anonymous.png");
             }
         }
 

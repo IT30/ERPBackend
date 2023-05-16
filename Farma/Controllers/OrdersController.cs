@@ -121,6 +121,7 @@ namespace Farma.Controllers
                             return NotFound();
 
                         OrdersEntity kolekcija = mapper.Map<OrdersEntity>(ordersUpdateDTO);
+                        kolekcija.TransactionDate = DateTime.Now;
                         mapper.Map(kolekcija, oldOrder);
                         ordersRepository.SaveChanges();
                         return Ok(mapper.Map<OrdersDTO>(kolekcija));

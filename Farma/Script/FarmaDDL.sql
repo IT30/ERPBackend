@@ -113,7 +113,7 @@ create table Farm.orders(
 	IDOrder uniqueidentifier not null,
 	IDUser uniqueidentifier not null,
 	TotalOrderPrice numeric(10) not null,
-	TransactionDate date not null,
+	TransactionDate datetime not null,
 	constraint PK_Order primary key (IDOrder),
 	constraint FK_Order_Users foreign key (IDUser)
 		references Farm.users (IDUser)
@@ -163,7 +163,7 @@ begin
 		where IDProduct=@idpr
 	end
 	else
-		RAISERROR('Nema dovoljno kolicine za ovu kupovinu', 16, 0);
+		RAISERROR('There is currently not enough of the product in stock.', 16, 0);
 end
 go
 

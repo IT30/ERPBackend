@@ -13,7 +13,5 @@ namespace Farma.DTO
         [Required(ErrorMessage = "Order must have a total price.")]
         public decimal TotalOrderPrice { get; set; } = 0!;
 
-        [Required]
-        public DateTime? TransactionDate { get; set; }
     }
 }

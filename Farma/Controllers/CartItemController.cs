@@ -66,6 +66,26 @@ namespace Farma.Controllers
 
         }
 
+        [HttpGet("user/{userID}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<CartItemDTO> GetCartItemByUser(Guid userID)
+        {
+            try
+            {
+                List<CartItemEntity> cartItems = cartItemRepository.GetCartItemsByUser(userID);
+                if (cartItems == null || cartItems.Count == 0)
+                    return NoContent();
+
+                return Ok(mapper.Map<List<CartItemDTO>>(cartItems));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
+
         [HttpPost]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -74,7 +94,9 @@ namespace Farma.Controllers
         {
             try
             {
-                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                string user = cartItemCreateDTO.IDUser.ToString();
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN" ||
+                    HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value == user)
                 {
                     Guid IDUser = cartItemCreateDTO.IDUser;
                     Guid IDProduct = cartItemCreateDTO.IDProduct;
@@ -114,7 +136,9 @@ namespace Farma.Controllers
         {
             try
             {
-                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                string user = cartItemUpdateDTO.IDUser.ToString();
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN" ||
+                    HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.NameIdentifier)?.Value == user)
                 {
                     Guid IDUser = cartItemUpdateDTO.IDUser;
                     Guid IDProduct = cartItemUpdateDTO.IDProduct;
@@ -158,17 +182,15 @@ namespace Farma.Controllers
                 if (!Guid.TryParse(cartItemID, out _))
                     return BadRequest("The value '" + cartItemID + "' is not valid.");
 
-                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
-                {
-                    CartItemEntity? cartItem = cartItemRepository.GetCartItemByID(Guid.Parse(cartItemID));
-                    if (cartItem == null)
-                        return NotFound("CartItem '" + cartItemID + "' not found.");
-                    cartItemRepository.DeleteCartItem(Guid.Parse(cartItemID));
-                    cartItemRepository.SaveChanges();
 
-                    return NoContent();
-                }
-                return StatusCode(StatusCodes.Status403Forbidden, "Access forbidden.");
+                CartItemEntity? cartItem = cartItemRepository.GetCartItemByID(Guid.Parse(cartItemID));
+                if (cartItem == null)
+                    return NotFound("CartItem '" + cartItemID + "' not found.");
+                cartItemRepository.DeleteCartItem(Guid.Parse(cartItemID));
+                cartItemRepository.SaveChanges();
+
+                return NoContent();
+
             }
             catch (Exception exception)
             {

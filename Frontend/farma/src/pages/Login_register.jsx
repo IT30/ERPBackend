@@ -4,6 +4,8 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "./Login_register.css";
 import { variables } from "../Variables";
+import Nav from "react-bootstrap/Nav";
+import { useNavigate } from "react-router-dom";
 
 export class Login_register extends Component {
   constructor(props) {
@@ -12,6 +14,7 @@ export class Login_register extends Component {
     this.state = {
       LoginUsername: "",
       LoginPassword: "",
+      isOpen: false,
 
       IDUser: 0,
       Email: "",
@@ -34,6 +37,11 @@ export class Login_register extends Component {
       x.type = "text";
     } else {
       x.type = "password";
+    }
+  }
+
+  componentDidMount() {
+    if (localStorage.getItem("token") != "undefined") {
     }
   }
 
@@ -84,15 +92,24 @@ export class Login_register extends Component {
       }),
     })
       .then((response) => response.json())
-      .then(
-        (data) => {
-          localStorage.setItem("token", data.token);
-          console.log(localStorage.token);
-        },
-        (error) => {
+      .then((data) => {
+        localStorage.setItem("token", data.token);
+        var datum = new Date();
+        localStorage.setItem("time", datum);
+        console.log(localStorage.token);
+        console.log(localStorage.time);
+        if (
+          localStorage.token == "undefined" ||
+          localStorage.token == "" ||
+          localStorage.token == undefined
+        ) {
           alert("Failed");
+          return;
+        } else {
+          console.log("yes");
+          window.location.assign("http://127.0.0.1:5173/")
         }
-      );
+      });
   }
 
   register() {
@@ -186,12 +203,16 @@ export class Login_register extends Component {
                               Password
                             </label>
                           </div>
-
-                          <input type="checkbox" onClick={() => this.myFunction()} />Show Password
-
+                          <input
+                            type="checkbox"
+                            onClick={() => this.myFunction()}
+                          />
+                          Show Password
                           <div className="d-flex justify-content-end pt-3">
                             <button
                               type="button"
+                              /* data-bs-toggle="modal"
+                              data-bs-target="#staticBackdrop" */
                               className="btn btn-warning btn-lg ms-2"
                               onClick={() => this.login()}
                             >
@@ -374,6 +395,51 @@ export class Login_register extends Component {
             </Col>
           </Row>
         </Container>
+
+        {/* <div
+          className="modal fade"
+          id="staticBackdrop"
+          data-bs-backdrop="static"
+          data-bs-keyboard="false"
+          tabIndex="-1"
+          aria-labelledby="staticBackdropLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="staticBackdropLabel">
+                  Notification
+                </h5>
+              </div>
+              {localStorage.getItem("token") != "undefined" ? (
+                <>
+                  <div className="modal-body">Login successful</div>
+                  <div className="modal-footer">
+                    <Nav.Link href="/">
+                      <button type="button" className="btn btn-primary">
+                        Cool
+                      </button>
+                    </Nav.Link>
+                  </div>
+                </>
+              ) : null}
+
+              {localStorage.getItem("token") == "undefined" ? (
+                <>
+                  <div className="modal-body">Login failed</div>
+                  <div className="modal-footer">
+                  <Nav.Link href="/login_register">
+                      <button type="button" className="btn btn-primary">
+                        Damn
+                      </button>
+                    </Nav.Link>
+                  </div>
+                </>
+              ) : null}
+            </div>
+          </div>
+        </div> */}
       </div>
     );
   }

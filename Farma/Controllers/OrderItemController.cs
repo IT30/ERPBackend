@@ -66,6 +66,26 @@ namespace Farma.Controllers
 
         }
 
+        [HttpGet("order/{orderID}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult<OrderItemDTO> GetOrderItemByOrder(Guid orderID)
+        {
+            try
+            {
+                List<OrderItemEntity> orderItems = orderItemRepository.GetOrderItemsByOrder(orderID);
+                if (orderItems == null || orderItems.Count == 0)
+                    return NoContent();
+
+                return Ok(mapper.Map<List<OrderItemDTO>>(orderItems));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+        }
+
         [HttpPost]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -74,7 +94,7 @@ namespace Farma.Controllers
         {
             try
             {
-                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value == "ADMIN")
+                if (HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Role)?.Value != null)
                 {
                     Guid IDOrder = orderItemCreateDTO.IDOrder;
                     Guid IDProduct = orderItemCreateDTO.IDProduct;

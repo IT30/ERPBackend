@@ -228,15 +228,15 @@ export class Origin extends Component {
                     onChange={this.changeOriginName}
                   />
                 </div>
-                  <div className="input-group mb-3">
-                    <span className="input-group-text">Origin description</span>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={OriginDescription}
-                      onChange={this.changeOriginDescription}
-                    />
-                  </div>
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Origin description</span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={OriginDescription}
+                    onChange={this.changeOriginDescription}
+                  />
+                </div>
 
                 {IDOrigin == 0 ? (
                   <button

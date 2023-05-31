@@ -39,6 +39,11 @@ namespace Farma.Repositories
             return context.OrderItems.ToList();
         }
 
+        public List<OrderItemEntity> GetOrderItemsByOrder(Guid OrderID)
+        {
+            return context.OrderItems.Where(e => e.IDOrder == OrderID).ToList();
+        }
+
         public bool SaveChanges()
         {
             return context.SaveChanges() > 0;

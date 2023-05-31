@@ -9,6 +9,8 @@ namespace Farma.Repositories
 
         CartItemEntity? GetCartItemByID(Guid CartItemID);
 
+        List<CartItemEntity> GetCartItemsByUser(Guid IDUser);
+
         CartItemDTO CreateCartItem(CartItemCreateDTO cartItemCreateDTO);
 
         void DeleteCartItem(Guid CartItemID);

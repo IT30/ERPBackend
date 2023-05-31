@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { variables } from "../Variables";
+import { Product } from "./Product";
 
 export class Orders extends Component {
   constructor(props) {
@@ -8,6 +9,8 @@ export class Orders extends Component {
     this.state = {
       orders: [],
       orderItems: [],
+      users: [],
+      products: [],
       modalTitle: "",
       WhichTab: 0,
       IDOrder: 0,
@@ -16,9 +19,14 @@ export class Orders extends Component {
       TransactionDate: "",
 
       IDOrderItem: 0,
-      IDProduct: 0,
+      IDProduct: "",
       OrderAmount: "",
       OrderPrice: "",
+      ProductName: "",
+      ProductAmount: "",
+
+      FirstName: "",
+      LastName: "",
 
       IDOrderFilter: "",
       OrderNameFilter: "",
@@ -73,6 +81,16 @@ export class Orders extends Component {
         console.log(data);
         this.setState({ orders: data, ordersWithoutFilter: data });
       });
+    fetch(variables.API_URL + "users", {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ users: data });
+      });
   }
 
   refreshOrder(id) {
@@ -83,11 +101,31 @@ export class Orders extends Component {
     })
       .then((response) => {
         this.setState({ IDOrder: id });
+        console.log(response);
+        if (response.body == null) console.log("Prazno");
         return response.json();
       })
       .then((data) => {
+        if (data == null) console.log("Prazno");
         console.log(data);
         this.setState({ orderItems: data });
+      })
+      .catch((error) => {
+        if (
+          error.name === "SyntaxError" &&
+          error.message.includes("Unexpected end of JSON input")
+        ) {
+          console.error("Order has no items in it");
+          this.setState({ orderItems: [] });
+        } else {
+          console.error(error);
+        }
+      });
+    fetch(variables.API_URL + "product")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ products: data, productsWithoutFilter: data });
       });
   }
 
@@ -105,7 +143,13 @@ export class Orders extends Component {
   }
 
   changeIDUser = (e) => {
-    this.setState({ IDUser: e.target.value });
+    this.setState({ FirstName: e.target.value });
+    this.setState({
+      IDUser:
+        e.target.options[e.target.options.selectedIndex].getAttribute(
+          "data-key"
+        ),
+    });
   };
 
   changeTotalOrderPrice = (e) => {
@@ -121,11 +165,22 @@ export class Orders extends Component {
   };
 
   changeOrderProduct = (e) => {
-    this.setState({ IDProduct: e.target.value });
+    this.setState({ ProductName: e.target.value });
+    this.setState({
+      IDProduct:
+        e.target.options[e.target.options.selectedIndex].getAttribute(
+          "data-key"
+        ),
+    });
+    this.setState({ ProductAmount: e.target.options[e.target.options.selectedIndex].getAttribute(
+      "data-amount"
+    ), });
+    console.log(this.state.ProductAmount);
+    console.log(this.state.ProductAmount);
   };
 
   changeOrderAmount = (e) => {
-    this.setState({ OrderAmount: e.target.value });
+    this.setState({ OrderAmount: e.target.value })
   };
 
   changeOrderPrice = (e) => {
@@ -138,14 +193,18 @@ export class Orders extends Component {
       IDUser: "",
       TotalOrderPrice: "",
       TransactionDate: "",
+      FirstName: "",
+      LastName: "",
     });
   }
 
   addOrderClick() {
     this.setState({
       modalTitle: "Add order item",
+      IDOrderItem: 0,
       IDOrder: this.state.IDOrder,
       IDProduct: "",
+      ProductName: "",
       OrderAmount: "",
       OrderPrice: "",
     });
@@ -159,6 +218,7 @@ export class Orders extends Component {
       TotalOrderPrice: ord.totalOrderPrice,
       TransactionDate: ord.transactionDate,
     });
+    console.log(ord.idUser);
   }
 
   editOrderClick(ordit) {
@@ -199,6 +259,7 @@ export class Orders extends Component {
   }
 
   createOrderClick() {
+    console.log(this.state.ProductAmount);
     fetch(variables.API_URL + "orderItem", {
       method: "POST",
       headers: {
@@ -209,7 +270,7 @@ export class Orders extends Component {
       body: JSON.stringify({
         IDOrder: this.state.IDOrder,
         IDProduct: this.state.IDProduct,
-        OrderAmount: this.state.CartAmount,
+        OrderAmount: this.state.OrderAmount,
         OrderPrice: this.state.OrderPrice,
       }),
     })
@@ -226,6 +287,7 @@ export class Orders extends Component {
   }
 
   updateClick() {
+    console.log(this.state.IDUser);
     fetch(variables.API_URL + "orders", {
       method: "PUT",
       headers: {
@@ -330,12 +392,19 @@ export class Orders extends Component {
     const {
       orders,
       orderItems,
+      users,
+      products,
       modalTitle,
       WhichTab,
       IDOrder,
       IDUser,
       TotalOrderPrice,
       TransactionDate,
+      ProductAmount,
+
+      FirstName,
+      LastName,
+      ProductName,
 
       IDOrderItem,
       IDProduct,
@@ -489,7 +558,7 @@ export class Orders extends Component {
                       </svg>
                     </button>
                   </div>
-                  IDUser
+                  User
                 </th>
                 <th>Total order price</th>
                 <th>Transaction date</th>
@@ -499,7 +568,15 @@ export class Orders extends Component {
               {orders.map((ord) => (
                 <tr key={ord.idOrder}>
                   <td>{ord.idOrder}</td>
-                  <td>{ord.idUser}</td>
+                  {users.map((usr) => {
+                    if (usr.idUser == ord.idUser) {
+                      return (
+                        <td key={usr.idUser}>
+                          {usr.firstName} {usr.lastName}{" "}
+                        </td>
+                      );
+                    }
+                  })}
                   <td>{ord.totalOrderPrice}</td>
                   <td>{ord.transactionDate}</td>
                   <td>
@@ -571,7 +648,7 @@ export class Orders extends Component {
             <thead>
               <tr>
                 <th>IDOrderItem</th>
-                <th>IDProduct</th>
+                <th>Product</th>
                 <th>OrderAmount</th>
                 <th>OrderPrice</th>
               </tr>
@@ -580,7 +657,11 @@ export class Orders extends Component {
               {orderItems.map((ordit) => (
                 <tr key={ordit.idOrderItem}>
                   <td>{ordit.idOrderItem}</td>
-                  <td>{ordit.idProduct}</td>
+                  {products.map((pr) => {
+                    if (pr.idProduct == ordit.idProduct) {
+                      return <td key={pr.idProduct}>{pr.productName}</td>;
+                    }
+                  })}
                   <td>{ordit.orderAmount}</td>
                   <td>{ordit.orderPrice}</td>
                   <td>
@@ -652,13 +733,20 @@ export class Orders extends Component {
               <div className="modal-body">
                 <div className="input-group mb-3">
                   <span className="input-group-text">User</span>
-                  <input
-                    type="text"
+                  <select
+                    value={FirstName}
                     className="form-control"
-                    value={IDUser}
+                    id="exampleFormControlSelect1"
                     onChange={this.changeIDUser}
-                  />
+                  >
+                    {users.map((usr) => (
+                      <option key={usr.idUser} data-key={usr.idUser}>
+                        {usr.firstName} {usr.lastName}{" "}
+                      </option>
+                    ))}
+                  </select>
                 </div>
+
                 <div className="input-group mb-3">
                   <span className="input-group-text">Total order price</span>
                   <input
@@ -727,12 +815,18 @@ export class Orders extends Component {
 
                 <div className="input-group mb-3">
                   <span className="input-group-text">Product</span>
-                  <input
-                    type="text"
+                  <select
+                    value={ProductName}
                     className="form-control"
-                    value={IDProduct}
+                    id="exampleFormControlSelect1"
                     onChange={this.changeOrderProduct}
-                  />
+                  >
+                    {products.map((pr) => (
+                      <option key={pr.idProduct} data-key={pr.idProduct} data-amount={pr.supplyKG}>
+                        {pr.productName} : {pr.supplyKG}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="input-group mb-3">
@@ -748,7 +842,7 @@ export class Orders extends Component {
                 <div className="input-group mb-3">
                   <span className="input-group-text">Price</span>
                   <input
-                    type="text"
+                    type="number"
                     className="form-control"
                     value={OrderPrice}
                     onChange={this.changeOrderPrice}

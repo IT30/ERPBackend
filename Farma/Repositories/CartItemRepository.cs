@@ -39,6 +39,11 @@ namespace Farma.Repositories
             return context.CartItem.ToList();
         }
 
+        public List<CartItemEntity> GetCartItemsByUser(Guid UserID)
+        {
+            return context.CartItem.Where(e => e.IDUser == UserID).ToList();
+        }
+
         public bool SaveChanges()
         {
             return context.SaveChanges() > 0;

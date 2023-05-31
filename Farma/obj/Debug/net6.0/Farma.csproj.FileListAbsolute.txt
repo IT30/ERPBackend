@@ -169,3 +169,4 @@ D:\Files\Fax\ERP\Backend\Farma\obj\Debug\net6.0\scopedcss\bundle\Farma.styles.cs
 D:\Files\Fax\ERP\Backend\Farma\obj\Debug\net6.0\Farma.csproj.CopyComplete
 D:\Files\Fax\ERP\Backend\Farma\obj\Debug\net6.0\Farma.genruntimeconfig.cache
 D:\Files\Fax\ERP\Backend\Farma\obj\Debug\net6.0\ref\Farma.dll
+D:\Files\Fax\ERP\Backend\Farma\bin\Debug\net6.0\Postman\Farma.postman_collection.json

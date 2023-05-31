@@ -1,8 +1,14 @@
 #root {
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0rem;
   text-align: center;
   width: 100%;
+  background-color: #00A2E8;
+}
+
+.banner{
+  background-image: "src\assets\images\MainBackground.png";
+  background-repeat: repeat-x;
 }
 
 .logo {

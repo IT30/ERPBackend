@@ -70,6 +70,64 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "CreateCartItem",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"idUser\": \"c471030b-6af8-499a-977d-c006b9efcc95\",\r\n        \"idProduct\": \"9ed97caf-9e11-400e-8007-1c8134760222\",\r\n        \"cartAmount\": 10,\r\n        \"cartPrice\": 500\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/cart",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCartItem",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"idCartItem\": \"fd9db64c-15a1-4cea-a3e4-dc2ee88ee826\",\r\n        \"idUser\": \"c471030b-6af8-499a-977d-c006b9efcc95\",\r\n        \"idProduct\": \"9ed97caf-9e11-400e-8007-1c8134760222\",\r\n        \"cartAmount\": 100,\r\n        \"cartPrice\": 500\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/cart",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"cart"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -166,6 +224,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "UpdateClass",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"idClass\": \"d50a8b84-7754-4a7d-aa3f-68ad5a656d3c\",\r\n        \"class\": \"B\",\r\n        \"classDescription\": \"Najbolji kvalitet\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/class",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"class"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -233,6 +320,64 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "CreateOrderItem",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"IDOrder\": \"fa3846a6-4aa1-4ee6-8fd7-bab0e2d0fb73\",\r\n        \"IDProduct\": \"9ed97caf-9e11-400e-8007-1c8134760222\",\r\n        \"OrderAmount\": 10,\r\n        \"OrderPrice\": 500\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/orderItem",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"orderItem"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateOrderItem",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"idOrderItem\": \"3b37c507-08e6-4025-96c8-7370fd0f1e0b\",\r\n        \"idOrder\": \"fa3846a6-4aa1-4ee6-8fd7-bab0e2d0fb73\",\r\n        \"idProduct\": \"9ed97caf-9e11-400e-8007-1c8134760222\",\r\n        \"orderAmount\": 100,\r\n        \"orderPrice\": 500\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/orderItem",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"orderItem"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -296,6 +441,64 @@
 								"api",
 								"orders",
 								"55356a15-181f-4437-883b-9edeb871fb39"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateOrder",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"idUser\": \"c471030b-6af8-499a-977d-c006b9efcc95\",\r\n        \"totalOrderPrice\": 5000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateOrders",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"idOrder\": \"55356a15-181f-4437-883b-9edeb871fb39\",\r\n        \"idUser\": \"c471030b-6af8-499a-977d-c006b9efcc95\",\r\n        \"totalOrderPrice\": 2000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/orders",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"orders"
 							]
 						}
 					},
@@ -396,6 +599,35 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "UpdateOrigin",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"idOrigin\": \"9d590483-53d2-4ef9-8a2d-01d63795daf0\",\r\n        \"originName\": \"Jovan\",\r\n        \"originDescription\": \"Rasna svinja\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/origin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"origin"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -459,6 +691,64 @@
 								"api",
 								"product",
 								"ecc0fd4b-6e03-414e-a1c6-67ed0ed9d600"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CreateProduct",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"idProductType\": \"7daefd85-1814-4d7c-9440-24d1db7d85eb\",\r\n        \"idClass\": \"7ff7b7b4-7323-4eef-a29b-22361d873c80\",\r\n        \"idOrigin\": \"9d590483-53d2-4ef9-8a2d-01d63795daf0\",\r\n        \"productName\": \"Suseno svinjsko meso\",\r\n        \"supplyKG\": 30,\r\n        \"priceKG\": 1000,\r\n        \"productPictureURL\": \"abcde\",\r\n        \"productDescription\": \"Najkvalitetnije domace suseno svinjsko meso\",\r\n        \"discountPercentage\": 5\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/product",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateProduct",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"idProduct\": \"ecc0fd4b-6e03-414e-a1c6-67ed0ed9d600\",\r\n        \"idProductType\": \"7daefd85-1814-4d7c-9440-24d1db7d85eb\",\r\n        \"idClass\": \"7ff7b7b4-7323-4eef-a29b-22361d873c80\",\r\n        \"idOrigin\": \"9d590483-53d2-4ef9-8a2d-01d63795daf0\",\r\n        \"productName\": \"Suseno svinjsko meso\",\r\n        \"supplyKG\": 500,\r\n        \"priceKG\": 1000,\r\n        \"productPictureURL\": \"abcde\",\r\n        \"productDescription\": \"Najkvalitetnije domace suseno svinjsko meso\",\r\n        \"discountPercentage\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/product",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"product"
 							]
 						}
 					},
@@ -539,6 +829,35 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n        \"category\": \"Kobasice\",\r\n        \"categoryDescription\": \"Bruka\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/productType",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"productType"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateProductType",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"idProductType\": \"7daefd85-1814-4d7c-9440-24d1db7d85eb\",\r\n        \"category\": \"Svinjski glava\",\r\n        \"categoryDescription\": \"Najfinije meso od svinje\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -663,7 +982,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"ProfilePictureURL\":\"\",\r\n    \"Email\":\"lala\",\r\n    \"Username\":\"user\",\r\n    \"FirstName\":\"user\",\r\n    \"LastName\":\"user\",\r\n    \"Adress\":\"user\",\r\n    \"City\":\"user\",\r\n    \"Phone\":\"user\",\r\n    \"PwdHash\":\"users\"\r\n}",
+							"raw": "{\r\n    \"ProfilePictureURL\":\"\",\r\n    \"Email\":\"lala\",\r\n    \"Username\":\"users\",\r\n    \"FirstName\":\"user\",\r\n    \"LastName\":\"user\",\r\n    \"Adress\":\"user\",\r\n    \"City\":\"user\",\r\n    \"Phone\":\"user\",\r\n    \"PwdHash\":\"users\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -692,7 +1011,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"IDUser\":\"f9833bc5-b985-4af4-ac8e-5d0baab75b67\",\r\n    \"ProfilePictureURL\":\"\",\r\n    \"Email\":\"lala\",\r\n    \"Username\":\"user\",\r\n    \"FirstName\":\"Zoran\",\r\n    \"LastName\":\"user\",\r\n    \"Adress\":\"user\",\r\n    \"City\":\"user\",\r\n    \"Phone\":\"user\",\r\n    \"UserRole\":\"user\",\r\n    \"PwdHash\":\"users\"\r\n}",
+							"raw": "{\r\n    \"IDUser\":\"1f8567c1-ec27-4d7f-a5cb-5cc41abb02c4\",\r\n    \"ProfilePictureURL\":\"default.jpg\",\r\n    \"Email\":\"lalasaaa\",\r\n    \"Username\":\"user\",\r\n    \"FirstName\":\"Zoran\",\r\n    \"LastName\":\"user\",\r\n    \"Adress\":\"user\",\r\n    \"City\":\"user\",\r\n    \"Phone\":\"user\",\r\n    \"UserRole\":\"USER\",\r\n    \"PwdHash\":\"users\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -713,6 +1032,37 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "UploadProfilePhoto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "pic",
+									"type": "file",
+									"src": "/C:/Users/aleks/Downloads/WPF_IT30_2019/MainBackground.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5020/api/users/photo",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5020",
+							"path": [
+								"api",
+								"users",
+								"photo"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
@@ -722,7 +1072,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImM0NzEwMzBiLTZhZjgtNDk5YS05NzdkLWMwMDZiOWVmY2M5NSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZ2l2ZW5uYW1lIjoiQWNhIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc3VybmFtZSI6IlBlcmljIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZW1haWxAZW1haWwuY29tIiwiZXhwIjoxNjgxMDc3MTk5LCJpc3MiOiJGVE5JVEVSUDIwMjMiLCJhdWQiOiJGVE5JVEVSUDIwMjMifQ.bLzevp7Tq91MAvk7R6U0IBPy8vrAYPazRwTYNhIVdEk",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImM0NzEwMzBiLTZhZjgtNDk5YS05NzdkLWMwMDZiOWVmY2M5NSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJhZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZ2l2ZW5uYW1lIjoiQWNhIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvc3VybmFtZSI6IlBlcmljIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZW1haWxAZW1haWwuY29tIiwiZXhwIjoxNjg0MjQ1MzcxLCJpc3MiOiJGVE5JVEVSUDIwMjMiLCJhdWQiOiJGVE5JVEVSUDIwMjMifQ.FETv3aZtkM5MxV-SPK7Cibk95rl13LGDiVCKWLDZXZM",
 				"type": "string"
 			}
 		]

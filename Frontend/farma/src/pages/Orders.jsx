@@ -80,6 +80,18 @@ export class Orders extends Component {
       .then((data) => {
         console.log(data);
         this.setState({ orders: data, ordersWithoutFilter: data });
+      })
+      .catch((error) => {
+        if (
+          error.name === "SyntaxError" &&
+          error.message.includes("Unexpected end of JSON input")
+        ) {
+          console.error("No orders");
+          this.setState({ orders: [] });
+
+        } else {
+          console.error(error);
+        }
       });
     fetch(variables.API_URL + "users", {
       headers: {
@@ -90,6 +102,7 @@ export class Orders extends Component {
       .then((data) => {
         console.log(data);
         this.setState({ users: data });
+        this.setState({ WhichTab: 0 });
       });
   }
 
@@ -125,7 +138,7 @@ export class Orders extends Component {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
-        this.setState({ products: data, productsWithoutFilter: data });
+        this.setState({ products: data });
       });
   }
 
@@ -175,7 +188,6 @@ export class Orders extends Component {
     this.setState({ ProductAmount: e.target.options[e.target.options.selectedIndex].getAttribute(
       "data-amount"
     ), });
-    console.log(this.state.ProductAmount);
     console.log(this.state.ProductAmount);
   };
 

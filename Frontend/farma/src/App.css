@@ -46,3 +46,13 @@
 .read-the-docs {
   color: #888;
 }
+
+.pagination .active .page-link {
+  background-color: green;
+  border-color: green;
+  color: white;
+}
+
+.pagination .page-link {
+  color: green;
+}

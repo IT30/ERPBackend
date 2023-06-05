@@ -117,6 +117,7 @@ create table Farm.orders(
 	constraint PK_Order primary key (IDOrder),
 	constraint FK_Order_Users foreign key (IDUser)
 		references Farm.users (IDUser)
+		ON DELETE CASCADE
 )
 
 create table Farm.order_item(
@@ -127,7 +128,8 @@ create table Farm.order_item(
 	OrderPrice numeric(8) not null,
 	constraint PK_Order_Item primary key (IDOrderItem),
 	constraint FK_Order_Item_Order foreign key (IDOrder)
-		references Farm.orders (IDOrder),
+		references Farm.orders (IDOrder)
+		ON DELETE CASCADE,
 	constraint FK_Order_Item_Product foreign key (IDProduct)
 		references Farm.product (IDProduct)
 )
@@ -140,7 +142,8 @@ create table Farm.cart_item(
 	CartPrice numeric(8) not null,
 	constraint PK_Cart_Item primary key (IDCartItem),
 	constraint FK_Cart_Item_User foreign key (IDUser)
-		references Farm.users (IDUser),
+		references Farm.users (IDUser)
+		ON DELETE CASCADE,
 	constraint FK_Cart_Item_Product foreign key (IDProduct)
 		references Farm.product (IDProduct)
 )

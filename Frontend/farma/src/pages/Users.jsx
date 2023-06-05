@@ -9,6 +9,7 @@ export class Users extends Component {
     this.state = {
       users: [],
       cart: [],
+      products: [],
       modalTitle: "",
       IDUser: 0,
       WhichTab: 0,
@@ -27,6 +28,8 @@ export class Users extends Component {
 
       IDCartItem: 0,
       IDProduct: "",
+      ProductName: "",
+      ProductAmount: "",
       CartAmount: "",
       CartPrice: "",
     };
@@ -75,14 +78,18 @@ export class Users extends Component {
           error.name === "SyntaxError" &&
           error.message.includes("Unexpected end of JSON input")
         ) {
-          console.error(
-            "User has no items in the cart"
-          );
+          console.error("User has no items in the cart");
           this.setState({ cart: [] });
-          this.setState({ Empty: "is empty"})
+          this.setState({ Empty: "is empty" });
         } else {
           console.error(error);
         }
+      });
+    fetch(variables.API_URL + "product")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ products: data });
       });
   }
 
@@ -96,7 +103,7 @@ export class Users extends Component {
       this.setState({ WhichTab: 1 });
     } else {
       this.setState({ WhichTab: 0 });
-      this.setState({ Empty: ""})
+      this.setState({ Empty: "" });
     }
   }
 
@@ -132,7 +139,17 @@ export class Users extends Component {
     this.setState({ IDUser: e.target.value });
   };
   changeCartProduct = (e) => {
-    this.setState({ IDProduct: e.target.value });
+    this.setState({ ProductName: e.target.value });
+    this.setState({
+      IDProduct:
+        e.target.options[e.target.options.selectedIndex].getAttribute(
+          "data-key"
+        ),
+    });
+    this.setState({ ProductAmount: e.target.options[e.target.options.selectedIndex].getAttribute(
+      "data-amount"
+    ), });
+    console.log(this.state.ProductAmount);
   };
   changeCartAmount = (e) => {
     this.setState({ CartAmount: e.target.value });
@@ -379,6 +396,7 @@ export class Users extends Component {
   render() {
     const {
       users,
+      products,
       modalTitle,
       WhichTab,
       IDUser,
@@ -398,6 +416,8 @@ export class Users extends Component {
       cart,
       IDCartItem,
       IDProduct,
+      ProductName,
+      ProductAmount,
       CartAmount,
       CartPrice,
     } = this.state;
@@ -431,7 +451,9 @@ export class Users extends Component {
                 </svg>
               </button>
 
-              <div className="h2">Users cart: {this.state.FirstName} {this.state.Empty}</div>
+              <div className="h2">
+                Users cart: {this.state.FirstName} {this.state.Empty}
+              </div>
               <button
                 type="button"
                 className="btn btn-primary m-2 float-end"
@@ -555,7 +577,7 @@ export class Users extends Component {
             <thead>
               <tr>
                 <th>IDCartItem</th>
-                <th>IDProduct</th>
+                <th>Product</th>
                 <th>CartAmount</th>
                 <th>CartPrice</th>
               </tr>
@@ -564,7 +586,11 @@ export class Users extends Component {
               {cart.map((carti) => (
                 <tr key={carti.idCartItem}>
                   <td>{carti.idCartItem}</td>
-                  <td>{carti.idProduct}</td>
+                  {products.map((pr) => {
+                    if (pr.idProduct == carti.idProduct) {
+                      return <td key={pr.idProduct}>{pr.productName}</td>;
+                    }
+                  })}
                   <td>{carti.cartAmount}</td>
                   <td>{carti.cartPrice}</td>
                   <td>
@@ -800,13 +826,20 @@ export class Users extends Component {
 
                 <div className="input-group mb-3">
                   <span className="input-group-text">Product</span>
-                  <input
-                    type="text"
+                  <select
+                    value={ProductName}
                     className="form-control"
-                    value={IDProduct}
+                    id="exampleFormControlSelect1"
                     onChange={this.changeCartProduct}
-                  />
+                  >
+                    {products.map((pr) => (
+                      <option key={pr.idProduct} data-key={pr.idProduct} data-amount={pr.supplyKG}>
+                        {pr.productName} : {pr.supplyKG}
+                      </option>
+                    ))}
+                  </select>
                 </div>
+
 
                 <div className="input-group mb-3">
                   <span className="input-group-text">Item amount</span>

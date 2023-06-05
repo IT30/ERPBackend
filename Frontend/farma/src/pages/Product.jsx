@@ -7,11 +7,17 @@ export class Product extends Component {
 
     this.state = {
       products: [],
+      classes: [],
+      origins: [],
+      productTypes: [],
       modalTitle: "",
       IDProduct: 0,
       IDProductType: "",
+      Category: "",
       IDClass: "",
+      Class: "",
       IDOrigin: "",
+      OriginName: "",
       ProductName: "",
       SupplyKG: "",
       PriceKG: "",
@@ -32,7 +38,8 @@ export class Product extends Component {
 
     var filteredData = this.state.productsWithoutFilter.filter(function (el) {
       return (
-        el.idProduct.toString()
+        el.idProduct
+          .toString()
           .toLowerCase()
           .includes(IDProductFilter.toString().trim().toLowerCase()) &&
         el.productName
@@ -73,6 +80,24 @@ export class Product extends Component {
         console.log(data);
         this.setState({ products: data, productsWithoutFilter: data });
       });
+    fetch(variables.API_URL + "origin")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ origins: data });
+      });
+    fetch(variables.API_URL + "productType")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ productTypes: data });
+      });
+    fetch(variables.API_URL + "class")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ classes: data });
+      });
   }
 
   componentDidMount() {
@@ -80,15 +105,33 @@ export class Product extends Component {
   }
 
   changeIDProductType = (e) => {
-    this.setState({ IDProductType: e.target.value });
+    this.setState({ Category: e.target.value });
+    this.setState({
+      IDProductType:
+        e.target.options[e.target.options.selectedIndex].getAttribute(
+          "data-key"
+        ),
+    });
   };
 
   changeIDClass = (e) => {
-    this.setState({ IDClass: e.target.value });
+    this.setState({ Class: e.target.value });
+    this.setState({
+      IDClass:
+        e.target.options[e.target.options.selectedIndex].getAttribute(
+          "data-key"
+        ),
+    });
   };
 
   changeIDOrigin = (e) => {
-    this.setState({ IDOrigin: e.target.value });
+    this.setState({ OriginName: e.target.value });
+    this.setState({
+      IDOrigin:
+        e.target.options[e.target.options.selectedIndex].getAttribute(
+          "data-key"
+        ),
+    });
   };
 
   changeProductName = (e) => {
@@ -248,11 +291,17 @@ export class Product extends Component {
   render() {
     const {
       products,
+      productTypes,
+      classes,
+      origins,
       modalTitle,
       IDProduct,
       IDProductType,
+      Category,
       IDClass,
+      Class,
       IDOrigin,
+      OriginName,
       ProductName,
       SupplyKG,
       PriceKG,
@@ -362,12 +411,12 @@ export class Product extends Component {
                     </svg>
                   </button>
                 </div>
-                IDProductType
+                Product Type
               </th>
-              <th>IDClass</th>
-              <th>IDOrigin</th>
+              <th>Class</th>
+              <th>Origin</th>
               <th>Product name</th>
-              <th>Supply(KG)</th>
+              <th>Supply(*100g)</th>
               <th>Price(KG)</th>
               <th>Product description</th>
               <th>Discount(%)</th>
@@ -377,9 +426,21 @@ export class Product extends Component {
             {products.map((prod) => (
               <tr key={prod.idProduct}>
                 <td>{prod.idProduct}</td>
-                <td>{prod.idProductType}</td>
-                <td>{prod.idClass}</td>
-                <td>{prod.idOrigin}</td>
+                {productTypes.map((prt) => {
+                  if (prt.idProductType == prod.idProductType) {
+                    return <td key={prt.idProductType}>{prt.category}</td>;
+                  }
+                })}
+                {classes.map((cls) => {
+                  if (cls.idClass == prod.idClass) {
+                    return <td key={cls.idClass}>{cls.class}</td>;
+                  }
+                })}
+                {origins.map((org) => {
+                  if (org.idOrigin == prod.idOrigin) {
+                    return <td key={org.idOrigin}>{org.originName}</td>;
+                  }
+                })}
                 <td>{prod.productName}</td>
                 <td>{prod.supplyKG}</td>
                 <td>{prod.priceKG}</td>
@@ -451,31 +512,58 @@ export class Product extends Component {
 
               <div className="modal-body">
                 <div className="input-group mb-3">
-                  <span className="input-group-text">Product Type</span>
-                  <input
-                    type="text"
+                  <span className="input-group-text">Product type</span>
+                  <select
+                    value={Category}
                     className="form-control"
-                    value={IDProductType}
+                    id="exampleFormControlSelect1"
                     onChange={this.changeIDProductType}
-                  />
+                  >
+                    {productTypes.map((prt) => (
+                      <option
+                        key={prt.idProductType}
+                        data-key={prt.idProductType}
+                      >
+                        {prt.category}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="input-group mb-3">
                   <span className="input-group-text">Class</span>
-                  <input
-                    type="text"
+                  <select
+                    value={Class}
                     className="form-control"
-                    value={IDClass}
+                    id="exampleFormControlSelect1"
                     onChange={this.changeIDClass}
-                  />
+                  >
+                    {classes.map((cls) => (
+                      <option
+                        key={cls.idClass}
+                        data-key={cls.idClass}
+                      >
+                        {cls.class}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="input-group mb-3">
                   <span className="input-group-text">Origin</span>
-                  <input
-                    type="text"
+                  <select
+                    value={OriginName}
                     className="form-control"
-                    value={IDOrigin}
+                    id="exampleFormControlSelect1"
                     onChange={this.changeIDOrigin}
-                  />
+                  >
+                    {origins.map((org) => (
+                      <option
+                        key={org.idOrigin}
+                        data-key={org.idOrigin}
+                      >
+                        {org.originName}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="input-group mb-3">
                   <span className="input-group-text">Product Name</span>
@@ -523,17 +611,17 @@ export class Product extends Component {
                   />
                 </div>
                 <div className="p-2 w-50 bd-highlight">
-                    <img
-                      width="250px"
-                      height="250px"
-                      src={PhotoPath + ProductPictureURL}
-                    />
-                    <input
-                      className="m-2"
-                      type="file"
-                      onChange={this.imageUpload}
-                    />
-                  </div>
+                  <img
+                    width="250px"
+                    height="250px"
+                    src={PhotoPath + ProductPictureURL}
+                  />
+                  <input
+                    className="m-2"
+                    type="file"
+                    onChange={this.imageUpload}
+                  />
+                </div>
 
                 {IDProduct == 0 ? (
                   <button

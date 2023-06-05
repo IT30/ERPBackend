@@ -16,6 +16,12 @@ import { Visitor } from "./pages/Visitor"
 import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { MDBFooter } from "mdb-react-ui-kit";
+import React from "react";
+
+if(localStorage.getItem("cartAmount") == "NaN")
+{
+  localStorage.setItem("cartAmount", 0)
+}
 
 function logout() {
   console.log(localStorage.token);
@@ -56,17 +62,8 @@ try {
   console.log(decodedHeader);
 } catch (e) {}
 
+
 function App() {
-  /* useEffect(() => {
-    var datum = new Date();
-    var logindate = new Date(localStorage.time);
-    if (logindate != null) {
-      if (logindate - datum > 3600000) {
-        localStorage.removeItem("token");
-      } else {
-      }
-    }
-  }); */
 
   return (
     <BrowserRouter>

@@ -21,12 +21,14 @@ export class Home extends Component {
     this.state = {
       products: [],
       productTypes: [],
+      classes: [],
       cart: [],
       Category: "",
       modalTitle: "",
       IDProduct: 0,
       IDProductType: "",
       IDClass: "",
+      Class: "",
       IDOrigin: "",
       ProductName: "",
       SupplyKG: "",
@@ -70,7 +72,7 @@ export class Home extends Component {
       }),
     })
       .then((res) => "Created successfuly")
-      .then(alert("Added"), this.refreshList());
+      .then(alert("Added"), localStorage.setItem("cartAmount", parseInt(localStorage.getItem("cartAmount")) + Price * this.state.CartAmount), this.refreshList());
   }
 
   FilterFn() {
@@ -149,6 +151,12 @@ export class Home extends Component {
           console.error(error);
         }
       });
+      fetch(variables.API_URL + "class")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        this.setState({ classes: data });
+      });
   }
 
   componentDidMount() {
@@ -163,6 +171,8 @@ export class Home extends Component {
       products,
       productTypes,
       cart,
+      classes,
+      Class,
       Category,
       modalTitle,
       IDProduct,
@@ -335,7 +345,14 @@ export class Home extends Component {
                         {productTypes.map((prt) => {
                           if (prt.idProductType == prod.idProductType) {
                             return (
-                              <p key={prt.idProductType}>{prt.category}</p>
+                              <p key={prt.idProductType}>{"Type: "}{prt.category}</p>
+                            );
+                          }
+                        })}
+                        {classes.map((cls) => {
+                          if (cls.idClass == prod.idClass) {
+                            return (
+                              <p key={cls.idClass}>{"Class: "}{cls.class}</p>
                             );
                           }
                         })}

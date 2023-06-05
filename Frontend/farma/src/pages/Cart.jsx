@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { variables } from "../Variables";
 import { useNavigate } from "react-router-dom";
 import {
@@ -16,9 +16,56 @@ import {
   MDBCol,
   MDBRange,
 } from "mdb-react-ui-kit";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import CheckoutForm from "../CheckoutForm";
+import "./Cart.css";
 
 var pathArray = window.location.pathname.split("/");
 var id = pathArray[2];
+
+// Make sure to call loadStripe outside of a component’s render to avoid
+// recreating the Stripe object on every render.
+// This is your test publishable API key.
+const stripePromise = loadStripe(
+  "pk_test_51NFRY6Aww2h82Tm0B4q2ybyBNDeyL1IJneiHP1CTXSNF1exVay07tmJ7qJwOX4M8qyvpgEW0EV9xWpRgj1krvjCC00ZIf8Ij1h"
+);
+var TotalPrice = 0
+const Stripe = () => {
+  const [clientSecret, setClientSecret] = useState("");
+
+  useEffect(() => {
+    // Create PaymentIntent as soon as the page loads
+    fetch("http://localhost:5020/create-payment-intent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: [{ id: "lalala"}],
+        totalAmount: localStorage.getItem("cartAmount")
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => setClientSecret(data.clientSecret));
+  }, []);
+
+  const appearance = {
+    theme: "stripe",
+  };
+  const options = {
+    clientSecret,
+    appearance,
+  };
+
+  return (
+    <>
+      {clientSecret && (
+        <Elements options={options} stripe={stripePromise}>
+          <CheckoutForm />
+        </Elements>
+      )}
+    </>
+  );
+};
 
 export class Cart extends Component {
   constructor(props) {
@@ -58,6 +105,7 @@ export class Cart extends Component {
   };
 
   refreshList(id) {
+    TotalPrice = 0
     console.log(id);
     this.setState({ IDUser: id });
     fetch(variables.API_URL + "users/" + id, {
@@ -88,6 +136,12 @@ export class Cart extends Component {
         if (data != null) {
           console.log(data);
           this.setState({ cart: data });
+          data.forEach((element) => {
+            TotalPrice += element.cartPrice/2;
+            console.log(TotalPrice);
+          });
+          this.setState({ Empty: "is not empty" });
+          console.log(TotalPrice);
         } else {
           this.setState({ cart: null });
         }
@@ -100,6 +154,7 @@ export class Cart extends Component {
           console.error("User has no items in the cart");
           this.setState({ cart: [] });
           this.setState({ Empty: "is empty" });
+
         } else {
           console.error(error);
         }
@@ -110,6 +165,7 @@ export class Cart extends Component {
         console.log(data);
         this.setState({ products: data });
       });
+    
   }
 
   refreshCart(id, name) {
@@ -321,7 +377,7 @@ export class Cart extends Component {
       );
   }
 
-  updateCartClick() {
+  updateCartClick(Cart, Product, Price) {
     fetch(variables.API_URL + "cart", {
       method: "PUT",
       headers: {
@@ -330,18 +386,18 @@ export class Cart extends Component {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        IDCartItem: this.state.IDCartItem,
+        IDCartItem: Cart,
         IDUser: this.state.IDUser,
-        IDProduct: this.state.IDProduct,
+        IDProduct: Product,
         CartAmount: this.state.CartAmount,
-        CartPrice: this.state.CartPrice,
+        CartPrice: Price * this.state.CartAmount,
       }),
     })
       .then((res) => "Updated successfuly")
       .then(
         (result) => {
           alert(result);
-          this.refreshList();
+          this.refreshList(this.state.IDUser);
         },
         (error) => {
           alert("Failed");
@@ -373,7 +429,7 @@ export class Cart extends Component {
     }
   }
 
-  deleteCartClick(id) {
+  deleteCartClick(id, price) {
     if (window.confirm("Are you sure?")) {
       fetch(variables.API_URL + "cart/" + id, {
         method: "DELETE",
@@ -383,7 +439,7 @@ export class Cart extends Component {
         },
       })
         .then((res) => "Deleted successfuly")
-        .then(this.refreshList(this.state.IDUser), window.location.reload());
+        .then(this.refreshList(this.state.IDUser), localStorage.setItem("cartAmount", localStorage.getItem("cartAmount") - price),window.location.reload());
     }
   }
 
@@ -402,6 +458,10 @@ export class Cart extends Component {
         this.setState({ ProfilePictureURL: data });
       });
   };
+
+  applyChanges() {
+    window.location.reload();
+  }
 
   render() {
     const {
@@ -465,21 +525,38 @@ export class Cart extends Component {
                                 );
                               }
                             })}
-                            <MDBCardText>{car.cartAmount}</MDBCardText>
+                            <MDBCardText>{car.cartAmount}{" - "}{car.cartPrice}{" RSD"}</MDBCardText>
                             <MDBCardText>
                               {products.map((pr) => {
                                 if (pr.idProduct == car.idProduct) {
                                   return (
-                                    <MDBRange
-                                      defaultValue={car.cartAmount}
-                                      value={this.CartAmount}
-                                      min="1"
-                                      max={pr.supplyKG}
-                                      step="1"
-                                      id="customRange3"
-                                      label="Kolicina(*100g/komada)"
-                                      onChange={this.handleRangeChange}
-                                    />
+                                    <>
+                                      <MDBRange
+                                        defaultValue={car.cartAmount}
+                                        value={this.cartAmount}
+                                        min="1"
+                                        max={pr.supplyKG}
+                                        step="1"
+                                        id="customRange3"
+                                        label="Kolicina(*100g/komada)"
+                                        onChange={this.handleRangeChange}
+                                      />
+
+                                      <MDBBtn
+                                        onClick={() =>
+                                          this.updateCartClick(
+                                            car.idCartItem,
+                                            car.idProduct,
+                                            pr.priceKG -
+                                              (pr.priceKG *
+                                                pr.discountPercentage) /
+                                                100
+                                          )
+                                        }
+                                      >
+                                        Apply changes
+                                      </MDBBtn>
+                                    </>
                                   );
                                 }
                               })}
@@ -487,10 +564,12 @@ export class Cart extends Component {
                           </MDBCardBody>
                         </MDBCol>
                       </MDBRow>
+
+                      <br></br>
                       <MDBBtn
                         className="me-1"
                         color="danger"
-                        onClick={() => this.deleteCartClick(car.idCartItem)}
+                        onClick={() => this.deleteCartClick(car.idCartItem, car.cartPrice)}
                       >
                         Delete item
                       </MDBBtn>
@@ -499,7 +578,9 @@ export class Cart extends Component {
                 </MDBCard>
               </MDBCol>
               <MDBCol md="6">
-                <MDBCard></MDBCard>
+                <MDBCard>
+                  {this.state.Empty != "is empty" ? (<Stripe />) : null}
+                </MDBCard>
               </MDBCol>
             </MDBRow>
           </MDBCol>
@@ -526,7 +607,7 @@ export class Cart extends Component {
                 <MDBListGroupItem>{this.state.users.phone}</MDBListGroupItem>
               </MDBListGroup>
               <MDBCardBody>
-                <MDBCardLink href="#">
+                <MDBCardText>
                   <MDBBtn
                     data-bs-toggle="modal"
                     data-bs-target="#exampleModal"
@@ -536,8 +617,8 @@ export class Cart extends Component {
                   >
                     Update account
                   </MDBBtn>
-                </MDBCardLink>
-                <MDBCardLink href="#">
+                </MDBCardText>
+                <MDBCardText>
                   <MDBBtn
                     className="me-1"
                     color="danger"
@@ -545,7 +626,7 @@ export class Cart extends Component {
                   >
                     Delete account
                   </MDBBtn>
-                </MDBCardLink>
+                </MDBCardText>
               </MDBCardBody>
             </MDBCard>
           </MDBCol>

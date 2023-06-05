@@ -6,10 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Stripe;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Azure.Core;
 
 var AllowCors = "_allowCors";
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddMvc();
 builder.Services.AddControllers();
@@ -63,7 +66,7 @@ string? scriptPathDDL = builder.Configuration.GetConnectionString("ScriptPathDDL
 
 if (connectionString != null && scriptPathDDL != null)
 {
-    string? scriptDDL = File.ReadAllText(scriptPathDDL);
+    string? scriptDDL = System.IO.File.ReadAllText(scriptPathDDL);
     using (SqlConnection connection = new SqlConnection(connectionString))
     {
         connection.Open();
@@ -107,3 +110,51 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.Run();
+
+//STRIPE
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
+[Route("create-payment-intent")]
+[ApiController]
+public class PaymentIntentApiController : Controller
+{
+    [HttpPost]
+    public ActionResult Create(PaymentIntentCreateRequest request)
+    {
+        StripeConfiguration.ApiKey = "sk_test_51NFRY6Aww2h82Tm02K7WQ7qT47OMEZPHYjm4pItFDd4g3hv372gPZrRQpivDOVblQl2DJ2Mty2VuSuCc9PxM8ocd00kTLKQaSw";
+        var paymentIntentService = new PaymentIntentService();
+        var paymentIntent = paymentIntentService.Create(new PaymentIntentCreateOptions
+        {
+            Amount = CalculateOrderAmount(request.TotalAmount),
+            Currency = "eur",
+            PaymentMethodTypes = new List<string> { "card" },
+        });
+
+        return Json(new { clientSecret = paymentIntent.ClientSecret });
+    }
+    private int CalculateOrderAmount(int amount)
+    {
+        if(amount <1)
+            return 100;
+        // Replace this constant with a calculation of the order's amount
+        // Calculate the order total on the server to prevent
+        // people from directly manipulating the amount on the client
+        //return items[0].TotalAmount;
+        return amount;
+    }
+
+    public class Item
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+        
+    }
+
+    public class PaymentIntentCreateRequest
+    {
+        [JsonProperty("items")]
+        public Item[] Items { get; set; }
+        [JsonProperty("totalAmount")]
+        public int TotalAmount { get; set; }
+    }
+}

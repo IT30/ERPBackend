@@ -27,6 +27,7 @@ function logout() {
   console.log(localStorage.token);
   localStorage.setItem("token", null);
   localStorage.setItem("ID", null);
+  localStorage.setItem("ID", 0);
   console.log(localStorage.token);
   window.location.reload(false);
   decodedRole = "VISITOR";

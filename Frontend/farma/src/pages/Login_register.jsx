@@ -157,10 +157,13 @@ export class Login_register extends Component {
         Phone: this.state.Phone,
         PwdHash: this.state.PwdHash,
       }),
-    }).then((res) => res.json())
-    .then(
-      window.location.assign("http://127.0.0.1:5173/login_register")
-      );
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (localStorage.getItem("token") != "null") {
+          window.location.assign("http://127.0.0.1:5173/login_register");
+        }
+      });
   }
 
   render() {

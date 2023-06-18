@@ -30,7 +30,8 @@ var id = pathArray[2];
 const stripePromise = loadStripe(
   "pk_test_51NFRY6Aww2h82Tm0B4q2ybyBNDeyL1IJneiHP1CTXSNF1exVay07tmJ7qJwOX4M8qyvpgEW0EV9xWpRgj1krvjCC00ZIf8Ij1h"
 );
-var TotalPrice = 0
+var Price = 0;
+var TotalPrice = 0;
 const Stripe = () => {
   const [clientSecret, setClientSecret] = useState("");
 
@@ -40,8 +41,8 @@ const Stripe = () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        items: [{ id: "lalala"}],
-        totalAmount: localStorage.getItem("cartAmount")
+        items: [{ id: "lalala" }],
+        totalAmount: localStorage.getItem("cartAmount"),
       }),
     })
       .then((res) => res.json())
@@ -105,7 +106,7 @@ export class Cart extends Component {
   };
 
   refreshList(id) {
-    TotalPrice = 0
+    TotalPrice = 0;
     console.log(id);
     this.setState({ IDUser: id });
     fetch(variables.API_URL + "users/" + id, {
@@ -137,11 +138,15 @@ export class Cart extends Component {
           console.log(data);
           this.setState({ cart: data });
           data.forEach((element) => {
-            TotalPrice += element.cartPrice/2;
-            console.log(TotalPrice);
+            Price += element.cartPrice / 2;
+            console.log(Price);
+            
           });
           this.setState({ Empty: "is not empty" });
+          TotalPrice = Price;
+          localStorage.setItem("cartAmount", TotalPrice);
           console.log(TotalPrice);
+
         } else {
           this.setState({ cart: null });
         }
@@ -154,7 +159,6 @@ export class Cart extends Component {
           console.error("User has no items in the cart");
           this.setState({ cart: [] });
           this.setState({ Empty: "is empty" });
-
         } else {
           console.error(error);
         }
@@ -165,7 +169,6 @@ export class Cart extends Component {
         console.log(data);
         this.setState({ products: data });
       });
-    
   }
 
   refreshCart(id, name) {
@@ -212,6 +215,8 @@ export class Cart extends Component {
     var id = pathArray[2];
     console.log(id);
     this.refreshList(id);
+  }
+  componentDidUpdate() {
   }
 
   openCart(id, name) {
@@ -439,7 +444,14 @@ export class Cart extends Component {
         },
       })
         .then((res) => "Deleted successfuly")
-        .then(this.refreshList(this.state.IDUser), localStorage.setItem("cartAmount", localStorage.getItem("cartAmount") - price),window.location.reload());
+        .then(
+          this.refreshList(this.state.IDUser),
+          localStorage.setItem(
+            "cartAmount",
+            localStorage.getItem("cartAmount") - price
+          ),
+          window.location.reload()
+        );
     }
   }
 
@@ -525,7 +537,12 @@ export class Cart extends Component {
                                 );
                               }
                             })}
-                            <MDBCardText>{car.cartAmount}{" - "}{car.cartPrice}{" RSD"}</MDBCardText>
+                            <MDBCardText>
+                              {car.cartAmount}
+                              {" - "}
+                              {car.cartPrice}
+                              {" RSD"}
+                            </MDBCardText>
                             <MDBCardText>
                               {products.map((pr) => {
                                 if (pr.idProduct == car.idProduct) {
@@ -569,7 +586,9 @@ export class Cart extends Component {
                       <MDBBtn
                         className="me-1"
                         color="danger"
-                        onClick={() => this.deleteCartClick(car.idCartItem, car.cartPrice)}
+                        onClick={() =>
+                          this.deleteCartClick(car.idCartItem, car.cartPrice)
+                        }
                       >
                         Delete item
                       </MDBBtn>
@@ -579,7 +598,7 @@ export class Cart extends Component {
               </MDBCol>
               <MDBCol md="6">
                 <MDBCard>
-                  {this.state.Empty != "is empty" ? (<Stripe />) : null}
+                  {this.state.Empty != "is empty" ? <Stripe /> : null}
                 </MDBCard>
               </MDBCol>
             </MDBRow>

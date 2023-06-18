@@ -55,25 +55,6 @@ export class Visitor extends Component {
     this.setState({ CartAmount: event.target.value });
   };
 
-  createCartClick(Product, Price) {
-    fetch(variables.API_URL + "cart", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        Authorization: "Bearer " + localStorage.getItem("token"),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        IDUser: localStorage.getItem("ID"),
-        IDProduct: Product,
-        CartAmount: this.state.CartAmount,
-        CartPrice: Price * this.state.CartAmount,
-      }),
-    })
-      .then((res) => "Created successfuly")
-      .then(alert("Added"), this.refreshList());
-  }
-
   FilterFn() {
     var IDProductFilter = this.state.IDProductFilter;
     var ProductNameFilter = this.state.ProductNameFilter;
@@ -125,34 +106,6 @@ export class Visitor extends Component {
       .then((data) => {
         console.log(data);
         this.setState({ productTypes: data });
-      });
-    fetch(variables.API_URL + "cart/user/" + localStorage.getItem("ID"), {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("token"),
-      },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        if (data != null) {
-          console.log(data);
-          this.setState({ cart: data });
-        } else {
-          this.setState({ cart: [] });
-        }
-      })
-      .catch((error) => {
-        if (
-          error.name === "SyntaxError" &&
-          error.message.includes("Unexpected end of JSON input")
-        ) {
-          console.error("User has no items in the cart");
-          this.setState({ cart: [] });
-          this.setState({ Empty: "is empty" });
-        } else {
-          console.error(error);
-        }
       });
   }
 
